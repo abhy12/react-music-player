@@ -1,18 +1,22 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import SongItem, { SongInterface } from './SongItem';
+import SongItem from './SongItem';
+import { updateAllSongs, updateFirstSongId, useAppSelector, useAppDispatch } from '../store/music-store';
+import Player from './Player';
 
 export default function Songs() {
    const [songs, setSongs] = useState<SongInterface[]>([]);
    const [isLoading, setIsLoading] = useState( false );
    const [hasError, setHasError] = useState( false );
+   const { currentSongId, isPlaying } = useAppSelector( state => state.music );
+   const dispatch = useAppDispatch();
 
    const fetchSongs = useCallback( async () => {
       setHasError( false );
       setIsLoading( true );
 
       try{
-         const response = await axios.post("https://staging2.syncorstream.com/api/fetch_music_json", {
+         const response = await axios.post( "https://staging2.syncorstream.com/api/fetch_music_json", {
             post: 0,
             page: 1,
             single_page: "staging2.syncorstream.com",
@@ -22,11 +26,12 @@ export default function Songs() {
          });
 
          const result = await response;
+         const records = result?.data?.records;
 
-         if( result?.data?.records ) setSongs( result.data.records );
+         if( records )  setSongs( records );
 
          setIsLoading( false );
-         console.log( result.data.records );
+         // console.log( records );
       } catch( e )  {
          console.error( "unable to fetch songs!!!" );
          setHasError( true );
@@ -38,21 +43,42 @@ export default function Songs() {
       fetchSongs();
    }, []);
 
+   let allSongs = {};
+   let firstSongId: number | null = null;
+
+   const items = songs.map(( song, i ) => {
+      // saving first song ID because the way we saving all songs in a object with number as a key
+      // because of that it will automatically reorderd song object and we get all songs in sequence
+      // but we don't want that, what we want is the first song ID.
+      if( i === 0 ) firstSongId = song.id;
+
+      allSongs = {...allSongs, [song.id]: song };
+      return <SongItem key={song.id} {...song} />
+   });
+
+   useEffect(() => {
+      // console.log( allSongs );
+      dispatch( updateAllSongs( allSongs ) );
+
+      // first song to be active by default because it need by the bottom music player
+      if( typeof firstSongId === 'number' )  dispatch( updateFirstSongId( firstSongId ) );
+   }, [songs]);
+
    return(
       <div>
-         {!isLoading && songs.map( song =>
-            <SongItem
-               key={song.id}
-               name={song.name}
-               id={song.id}
-               artis_name={song.artis_name}
-               audio={song.audio}
-               thumb={song.thumb}
-               flt_name={song.flt_name}
-            />
-         )}
+         {(!isLoading && !hasError ) && items}
+         {(!isLoading && !hasError ) && <Player />}
          {isLoading && <p>Loading...</p>}
          {( !isLoading && hasError ) && <p>Something went wrong please try again.</p>}
       </div>
    );
+}
+
+export interface SongInterface {
+   id: number,
+   name: string,
+   artis_name: string,
+   thumb: string,
+   audio: string,
+   flt_name?: string[]
 }
