@@ -9,15 +9,14 @@ interface WaveFormProps {
    mute?: boolean,
    setDuration: CallableFunction,
    afterSongLoaded?: CallableFunction,
-   afterUrlChange?: CallableFunction,
    updateTime?: boolean
 }
 
-export default function WaveForm({ audioUrl, play, isActive, mute = false, setDuration, afterSongLoaded, afterUrlChange, updateTime = true }: WaveFormProps ) {
+export default function WaveForm({ audioUrl, play, isActive, mute = false, setDuration, afterSongLoaded, updateTime = true }: WaveFormProps ) {
    const ref = useRef<any>( undefined );
    const [waveInstance, setWaveInstance] = useState<null | WaveSurfer>( null );
    const dispatch = useAppDispatch();
-   const { currentDurationSeek, currentDuration, isPlaying, currentSongId } = useAppSelector( state => state.music );
+   const { currentDurationSeek, currentDuration } = useAppSelector( state => state.music );
 
    // because of wavesurfer traditional callback the state variables
    // doesn't get updated so one solution to use Ref()
@@ -29,12 +28,15 @@ export default function WaveForm({ audioUrl, play, isActive, mute = false, setDu
    const currentDurationRef = useRef( currentDuration );
    currentDurationRef.current = currentDuration;
 
-   const reUpdateDuration = useCallback(( instance: WaveSurfer ) => {
-      if( !currentDuration )  return
+   const changeDuration = useCallback(( currentSongTime: number ) => {
+      if( !activeRef.current || !waveRef.current ) return
 
-      instance.setTime( currentDuration );
-   }, [currentDuration]);
+      dispatch( updateCurrentDurationSeek( currentSongTime ) );
+      // console.log( currentSongTime );
+   }, [activeRef, waveRef]);
 
+
+   // init wave
    useEffect(() => {
       if( !ref.current )  return
 
@@ -65,11 +67,7 @@ export default function WaveForm({ audioUrl, play, isActive, mute = false, setDu
 
       /** End **/
 
-      instance.on( "click", whenClicked );
-
-      instance.on( "seeking", ( currentTime ) => {
-         console.log( currentDuration, currentTime );
-      })
+      instance.on( "seeking", changeDuration );
 
       if( mute ) instance.setMuted( true )
 
@@ -78,12 +76,8 @@ export default function WaveForm({ audioUrl, play, isActive, mute = false, setDu
       return () => instance.destroy();
    }, []);
 
-   function whenClicked( currentSongTime: number )  {
-      if( !activeRef.current || !waveRef.current ) return
 
-      dispatch( updateCurrentDurationSeek( waveRef.current.getCurrentTime() ) );
-      // console.log( currentSongTime );
-   }
+   // update duration when new position seek
    useEffect(() => {
       if( !waveInstance || !currentDurationSeek || !isActive )  return
 
@@ -120,8 +114,9 @@ export default function WaveForm({ audioUrl, play, isActive, mute = false, setDu
 
       (async () => {
          await waveInstance.load( audioUrl );
-         // console.log( currentDuration );
+
          if( currentDurationRef.current ) waveInstance.setTime( currentDurationRef.current );
+
          if( play )  {
             await waveInstance.play();
          } else {
