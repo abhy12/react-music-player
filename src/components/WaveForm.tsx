@@ -17,7 +17,7 @@ export default function WaveForm({ songId, audioUrl, play, isActive, mute = fals
    const ref = useRef<any>( undefined );
    const [waveInstance, setWaveInstance] = useState<null | WaveSurfer>( null );
    const dispatch = useAppDispatch();
-   const { currentDurationSeek, currentDuration, isPlaying } = useAppSelector( state => state.music );
+   const { currentDurationSeek, currentDuration, isPlaying, currentVolume } = useAppSelector( state => state.music );
 
    // because of wavesurfer traditional callback, the state variables
    // doesn't get updated state on the callback, so one solution to use useRef()
@@ -134,6 +134,13 @@ export default function WaveForm({ songId, audioUrl, play, isActive, mute = fals
       })();
 
    }, [audioUrl]);
+
+   // change volume
+   useEffect(() => {
+      if( !waveInstance || mute )  return
+
+      waveInstance.setVolume( currentVolume );
+   }, [currentVolume]);
 
    return(
      <div ref={ref}></div>

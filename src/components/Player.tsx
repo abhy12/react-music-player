@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAppSelector, useAppDispatch, updateIsPlaying, updateCurrentSongId, nextSong, prevSong } from "../store/music-store";
+import { useAppSelector, useAppDispatch, updateIsPlaying, updateCurrentSongId, nextSong, prevSong, updateCurrentVolume } from "../store/music-store";
 import { SongInterface } from "./Songs";
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import WaveForm from "./WaveForm";
@@ -29,11 +29,26 @@ export default function Player()  {
 
    }, [currentSongId, firstSongId]);
 
+   // @ts-ignore
+   function rangeInputHandler( e: React.FormEvent<HTMLInputElement> )  {
+      let timeout: number;
+
+      // @ts-ignore
+      return ( e ) => {
+         const value = +e.currentTarget.value / 100;
+         clearTimeout( timeout );
+
+         timeout = setTimeout(() => {
+            dispatch( updateCurrentVolume( value ) );
+         }, 100 );
+      }
+   }
+
    if( !currentSong || !songId )  return<></>
 
    return(
       <div className="fixed left-0 right-0 bottom-0 z-50 bg-black">
-         <div className="grid grid-cols-[120px_auto_auto_auto_auto_1fr_1fr] gap-x-4 md:gap-x-12 items-center p-3 md:px-12 py-6">
+         <div className="grid grid-cols-[120px_auto_auto_auto_auto_1fr_1fr_auto] gap-x-4 md:gap-x-12 items-center p-3 md:px-12 py-6">
             <img className="w-16 aspect-square" src={currentSong.thumb} />
             <div>
                <FontAwesomeIcon
@@ -83,6 +98,15 @@ export default function Player()  {
                mute={true}
                updateTime={false}
             />
+            <div>
+               <input
+                  // @ts-ignore
+                  onChange={rangeInputHandler()}
+                  type="range"
+                  min="0"
+                  max="100"
+               />
+            </div>
          </div>
       </div>
    )

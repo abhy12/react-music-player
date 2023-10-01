@@ -11,6 +11,7 @@ interface MusicState  {
    allSongs: {
       [key: number]: SongInterface
    },
+   currentVolume: number,
 }
 
 const initialState: MusicState = {
@@ -20,6 +21,7 @@ const initialState: MusicState = {
    currentDuration: null,
    currentDurationSeek: 0,
    allSongs: {},
+   currentVolume: 1,
 }
 
 const musicSlice = createSlice({
@@ -73,10 +75,13 @@ const musicSlice = createSlice({
 
          state.currentSongId = prevSongId;
       },
+      updateCurrentVolume: ( state, action: PayloadAction<MusicState['currentVolume']> ) => {
+         state.currentVolume = action.payload;
+      }
    }
 });
 
-export const { updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs, nextSong, prevSong } = musicSlice.actions;
+export const { updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs, nextSong, prevSong, updateCurrentVolume } = musicSlice.actions;
 
 const store = configureStore({
    reducer: {
