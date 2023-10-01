@@ -43,11 +43,40 @@ const musicSlice = createSlice({
       },
       updateAllSongs: ( state, action: PayloadAction<MusicState['allSongs']> ) => {
          state.allSongs = action.payload;
-      }
+      },
+      nextSong: state => {
+         if( !state.currentSongId )  return
+
+         // doing reverse because the way we saving all songs
+         const keys = Object.keys( state.allSongs ).reverse();
+         const currentPosition = +keys.indexOf( state.currentSongId + '' );
+         const nextPosition: string | undefined = keys[currentPosition + 1];
+
+         if( !nextPosition )  return
+
+         const nextSongId = +nextPosition;
+
+         state.currentSongId = nextSongId;
+
+         console.log( nextSongId, state.currentSongId , keys );
+      },
+      prevSong: state => {
+         if( !state.currentSongId )  return
+         // doing reverse because the way we saving all songs
+         const keys = Object.keys( state.allSongs ).reverse();
+         const currentPosition = +keys.indexOf( state.currentSongId + '' );
+         const prevPosition: string | undefined = keys[currentPosition - 1];
+
+         if( !prevPosition )  return
+
+         const prevSongId = +prevPosition;
+
+         state.currentSongId = prevSongId;
+      },
    }
 });
 
-export const { updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs } = musicSlice.actions;
+export const { updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs, nextSong, prevSong } = musicSlice.actions;
 
 const store = configureStore({
    reducer: {
