@@ -28,7 +28,7 @@ export default function Player()  {
 
    }, [currentSongId, firstSongId]);
 
-   if( !currentSong )  return<></>
+   if( !currentSong || !songId )  return<></>
 
    return(
       <div className="fixed left-0 right-0 bottom-0 z-50 bg-black">
@@ -62,6 +62,7 @@ export default function Player()  {
                {songDuration && convertSecondToMinutesAndSecond( songDuration )}
             </p>
             <WaveForm
+               songId={songId}
                audioUrl={currentSong.audio}
                play={isPlaying}
                isActive={true}

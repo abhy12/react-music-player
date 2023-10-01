@@ -50,6 +50,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
             {songDuration && convertSecondToMinutesAndSecond( songDuration )}
          </p>
          <WaveForm
+            songId={id}
             audioUrl={audio}
             play={isPlaying}
             isActive={isActive}

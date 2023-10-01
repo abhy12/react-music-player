@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { useAppDispatch, updateCurrentDuration, updateCurrentDurationSeek, useAppSelector } from "../store/music-store";
+import { useAppDispatch, updateCurrentDuration, updateCurrentDurationSeek, useAppSelector, updateCurrentSongId, updateIsPlaying } from "../store/music-store";
 import WaveSurfer from "wavesurfer.js";
 
 interface WaveFormProps {
+   songId: number,
    audioUrl: string,
    play: boolean,
    isActive: boolean,
@@ -12,14 +13,14 @@ interface WaveFormProps {
    updateTime?: boolean
 }
 
-export default function WaveForm({ audioUrl, play, isActive, mute = false, setDuration, afterSongLoaded, updateTime = true }: WaveFormProps ) {
+export default function WaveForm({ songId, audioUrl, play, isActive, mute = false, setDuration, afterSongLoaded, updateTime = true }: WaveFormProps ) {
    const ref = useRef<any>( undefined );
    const [waveInstance, setWaveInstance] = useState<null | WaveSurfer>( null );
    const dispatch = useAppDispatch();
-   const { currentDurationSeek, currentDuration } = useAppSelector( state => state.music );
+   const { currentDurationSeek, currentDuration, isPlaying } = useAppSelector( state => state.music );
 
-   // because of wavesurfer traditional callback the state variables
-   // doesn't get updated so one solution to use Ref()
+   // because of wavesurfer traditional callback, the state variables
+   // doesn't get updated state on the callback, so one solution to use useRef()
    // this temporary or permanent solution
    const activeRef = useRef( isActive );
    activeRef.current = isActive;
@@ -27,12 +28,17 @@ export default function WaveForm({ audioUrl, play, isActive, mute = false, setDu
    waveRef.current = waveInstance;
    const currentDurationRef = useRef( currentDuration );
    currentDurationRef.current = currentDuration;
+   const playRef = useRef( isPlaying );
+   playRef.current = isPlaying;
 
-   const changeDuration = useCallback(( currentSongTime: number ) => {
-      if( !activeRef.current || !waveRef.current ) return
+   const waveFormClickHandler = useCallback(() => {
+      if( !waveRef.current ) return
 
-      dispatch( updateCurrentDurationSeek( currentSongTime ) );
-      // console.log( currentSongTime );
+      if( !activeRef.current ) dispatch( updateCurrentSongId( songId ) );
+
+      if( !playRef.current ) dispatch( updateIsPlaying( true ) );
+
+      dispatch( updateCurrentDurationSeek( waveRef.current.getCurrentTime() ) );
    }, [activeRef, waveRef]);
 
 
@@ -49,6 +55,7 @@ export default function WaveForm({ audioUrl, play, isActive, mute = false, setDu
          height: 40,
          progressColor: "rgba(255, 255, 255, 0.4)",
          waveColor: "rgba(255, 255, 255, 0.7)",
+         fillParent: true,
       });
 
       instance.on( "ready", () => {
@@ -67,7 +74,9 @@ export default function WaveForm({ audioUrl, play, isActive, mute = false, setDu
 
       /** End **/
 
-      instance.on( "seeking", changeDuration );
+      // don't use "seeking" event it will give
+      // some glitch effect when sound is playing
+      instance.on( "click", waveFormClickHandler );
 
       if( mute ) instance.setMuted( true )
 

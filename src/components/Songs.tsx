@@ -1,14 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import SongItem from './SongItem';
-import { updateAllSongs, updateFirstSongId, useAppSelector, useAppDispatch } from '../store/music-store';
+import { updateAllSongs, updateFirstSongId, useAppDispatch } from '../store/music-store';
 import Player from './Player';
 
 export default function Songs() {
    const [songs, setSongs] = useState<SongInterface[]>([]);
    const [isLoading, setIsLoading] = useState( false );
    const [hasError, setHasError] = useState( false );
-   const { currentSongId, isPlaying } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
 
    const fetchSongs = useCallback( async () => {
