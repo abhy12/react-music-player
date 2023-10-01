@@ -58,15 +58,7 @@ export default function WaveForm({ audioUrl, play, isActive, mute = false, setDu
       /** Update current duration of song **/
 
       if( updateTime )  {
-         const timeout = 300;
-         let currentTime: any = Date.now();
-
          instance.on( "audioprocess", function( currentSongTime )  {
-            const diff = Date.now() - currentTime;
-            if( diff < timeout )  return
-
-            // console.log( currentSongTime, Date.now() - currentTime );
-            currentTime = Date.now();
             dispatch( updateCurrentDuration( currentSongTime ) );
          });
       }
