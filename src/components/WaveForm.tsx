@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { useAppDispatch, updateCurrentDuration, updateCurrentDurationSeek, useAppSelector, updateCurrentSongId, updateIsPlaying } from "../store/music-store";
+import { useAppDispatch, updateCurrentDuration, updateCurrentDurationSeek, useAppSelector, updateCurrentSongId, updateIsPlaying, nextSong } from "../store/music-store";
 import WaveSurfer from "wavesurfer.js";
 
 interface WaveFormProps {
@@ -79,6 +79,10 @@ export default function WaveForm({ songId, audioUrl, play, isActive, mute = fals
       instance.on( "click", waveFormClickHandler );
 
       if( mute ) instance.setMuted( true )
+
+      instance.on( "finish", () => {
+         dispatch( nextSong() );
+      });
 
       setWaveInstance( instance );
 
