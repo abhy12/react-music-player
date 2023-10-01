@@ -53,6 +53,7 @@ export default function Player()  {
             <div>
                <FontAwesomeIcon
                   icon={faBackwardStep}
+                  className="cursor-pointer"
                   onClick={() => dispatch( prevSong() )}
                />
             </div>
@@ -75,6 +76,7 @@ export default function Player()  {
             <div>
                <FontAwesomeIcon
                   icon={faForwardStep}
+                  className="cursor-pointer"
                   onClick={() => dispatch( nextSong() )}
                />
             </div>
