@@ -50,11 +50,9 @@ export default function WaveForm({ songId, audioUrl, play, isActive, mute = fals
          container: ref.current,
          url: audioUrl,
          autoplay: false,
-         barWidth: 1,
-         barHeight: 4,
          height: 40,
-         progressColor: "rgba(255, 255, 255, 0.4)",
-         waveColor: "rgba(255, 255, 255, 0.7)",
+         progressColor: "rgb(8, 22, 191)",
+         waveColor: "rgba(255, 255, 255, 1)",
          fillParent: true,
       });
 
