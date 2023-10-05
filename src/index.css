@@ -21,3 +21,11 @@ html{
   -webkit-box-orient: vertical;
   @apply overflow-hidden whitespace-pre-wrap line-clamp-1;
 }
+
+.ellipsis-2{
+  @apply line-clamp-2;
+}
+
+.full-line{
+  @apply line-clamp-none;
+}

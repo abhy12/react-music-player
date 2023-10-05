@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SongInterface } from "./Songs.tsx";
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import { updateIsPlaying, updateCurrentSongId, useAppDispatch, useAppSelector } from "../store/music-store";
 import WaveForm from "./WaveForm";
 import { convertSecondToMinutesAndSecond } from "../../util/util.ts"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
 
 export default function SongItem({ id, name, artis_name, flt_name, thumb, audio }: SongInterface )  {
@@ -12,6 +14,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
    const [isActive, setIsActive] = useState( false );
    const { currentSongId, isPlaying, currentDuration } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
+   const cateElRef = useRef<HTMLSpanElement>( null );
 
    useEffect(() => {
       if( currentSongId === id )  setIsActive( true )
@@ -42,7 +45,22 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
             <span className="ellipsis">{name}</span>
             <span className="block ellipsis text-white/50">{artis_name}</span>
          </p>
-         <p className="ellipsis text-white/50">{Array.isArray( flt_name ) && flt_name.join( ", " )}</p>
+         <p className="text-white/50 flex items-start">
+            <span
+               className="grow mr-2 ellipsis ellipsis-2"
+               ref={cateElRef}
+            >
+               {Array.isArray( flt_name ) && flt_name.join( ", " )}
+            </span>
+            <FontAwesomeIcon
+               icon={faCirclePlus}
+               className="text-xl shrink-0 w-8 cursor-pointer"
+               onClick={() => {
+                  if( !cateElRef.current ) return
+                  cateElRef.current.classList.toggle( "full-line" );
+               }}
+            />
+         </p>
          <p className="text-center text-white/50">
             {( !isActive && songDuration ) && '00:00'}
             {( currentDuration && isActive ) && convertSecondToMinutesAndSecond( currentDuration ) }

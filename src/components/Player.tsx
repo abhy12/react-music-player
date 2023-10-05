@@ -107,6 +107,7 @@ export default function Player()  {
                   type="range"
                   min="0"
                   max="100"
+                  defaultValue="100"
                />
             </div>
          </div>
