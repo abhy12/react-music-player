@@ -10,10 +10,11 @@ interface WaveFormProps {
    mute?: boolean,
    setDuration: CallableFunction,
    afterSongLoaded?: CallableFunction,
-   updateTime?: boolean
+   updateTime?: boolean,
+   className?: string,
 }
 
-export default function WaveForm({ songId, audioUrl, play, isActive, mute = false, setDuration, afterSongLoaded, updateTime = true }: WaveFormProps ) {
+export default function WaveForm({ songId, audioUrl, play, isActive, mute = false, setDuration, afterSongLoaded, updateTime = true, className }: WaveFormProps ) {
    const ref = useRef<any>( undefined );
    const [waveInstance, setWaveInstance] = useState<null | WaveSurfer>( null );
    const dispatch = useAppDispatch();
@@ -145,6 +146,6 @@ export default function WaveForm({ songId, audioUrl, play, isActive, mute = fals
    }, [currentVolume]);
 
    return(
-     <div ref={ref}></div>
+     <div className={className}  ref={ref}></div>
    )
 }

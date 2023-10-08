@@ -29,7 +29,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
    }, [setIsSocialModalActive]);
 
    return(
-      <div className="grid grid-cols-[55px_auto_1fr_1fr_120px_1fr_auto] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
+      <div className="grid grid-cols-[40px_auto_1fr_auto] md:grid-cols-[55px_auto_1fr_1fr_120px_1fr_auto] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
          <img className="w-full aspect-square" src={thumb} />
          <div>
             { ( !isPlaying || !isActive ) &&
@@ -47,11 +47,11 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
                />
             }
          </div>
-         <p>
-            <span className="ellipsis">{name}</span>
+         <p className="text-sm md:text-lg">
+            <span className="ellipsis mb-1 md:mb-0">{name}</span>
             <span className="block ellipsis text-white/50">{artis_name}</span>
          </p>
-         <p className="text-white/50 flex items-start">
+         <p className="text-white/50 hidden md:flex items-start">
             <span
                className="grow mr-2 ellipsis ellipsis-2"
                ref={cateElRef}
@@ -67,13 +67,14 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
                }}
             />
          </p>
-         <p className="text-center text-white/50">
+         <p className="text-center text-white/50 hidden md:block">
             {( !isActive && songDuration ) && '00:00'}
             {( currentDuration && isActive ) && convertSecondToMinutesAndSecond( currentDuration ) }
             {( songDuration ) && ' / '}
             {songDuration && convertSecondToMinutesAndSecond( songDuration )}
          </p>
          <WaveForm
+            className="hidden md:block"
             songId={id}
             audioUrl={audio}
             play={isPlaying}
@@ -81,7 +82,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
             setDuration={setSongDuration}
             afterSongLoaded={() => setIsSongLoaded( true )}
          />
-         <div className="text-xl text-white/50 space-x-2 md:space-x-4">
+         <div className="text-base md:text-xl text-right text-white/50 space-x-2 md:space-x-4">
             <FontAwesomeIcon
                className="cursor-pointer"
                icon={faShareNodes}

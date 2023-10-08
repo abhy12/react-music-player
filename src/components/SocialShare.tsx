@@ -34,7 +34,7 @@ export default function SocialShare( { url, onCloseClick } :  SocialShareProps )
     }, []);
 
    return(
-      <div className="w-full max-w-md border-2 border-white/20 rounded p-3 md:p-4 bg-black text-white">
+      <div className="w-full max-w-md border-2 border-white/20 rounded p-3 md:p-4 m-2 md:m-0 bg-black text-white">
          <div className="text-right">
             <button
                className="cursor-pointer text-lg"

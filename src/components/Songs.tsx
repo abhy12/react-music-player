@@ -65,10 +65,12 @@ export default function Songs() {
 
    return(
       <div>
-         {(!isLoading && !hasError ) && items}
+         <div className="p-3 md:p-5">
+            {(!isLoading && !hasError ) && items}
+            {isLoading && <p>Loading...</p>}
+            {( !isLoading && hasError ) && <p>Something went wrong please try again.</p>}
+         </div>
          {(!isLoading && !hasError ) && <Player />}
-         {isLoading && <p>Loading...</p>}
-         {( !isLoading && hasError ) && <p>Something went wrong please try again.</p>}
       </div>
    );
 }

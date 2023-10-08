@@ -5,7 +5,7 @@ import Songs from './components/Songs';
 function App() {
    return (
       <Provider store={store}>
-         <div className="p-3 md:p-5">
+         <div >
             <Songs />
          </div>
       </Provider>

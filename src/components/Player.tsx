@@ -47,9 +47,9 @@ export default function Player()  {
    if( !currentSong || !songId )  return<></>
 
    return(
-      <div className="fixed left-0 right-0 bottom-0 z-50 bg-black">
-         <div className="grid grid-cols-[120px_auto_auto_auto_auto_1fr_1fr_auto] gap-x-4 md:gap-x-12 items-center p-3 md:px-12 py-6">
-            <img className="w-16 aspect-square" src={currentSong.thumb} />
+      <div className="sticky left-0 right-0 bottom-0 z-50 bg-black">
+         <div className="grid grid-cols-[40px_auto_auto_auto_1fr] md:grid-cols-[120px_auto_auto_auto_auto_1fr_1fr_auto] gap-x-4 md:gap-x-12 items-center p-3 md:px-12 py-6">
+            <img className="w-full md:w-16 aspect-square" src={currentSong.thumb} />
             <div>
                <FontAwesomeIcon
                   icon={faBackwardStep}
@@ -80,13 +80,13 @@ export default function Player()  {
                   onClick={() => dispatch( nextSong() )}
                />
             </div>
-            <p className="text-center text-white/50">
+            <p className="text-center text-white/50 hidden md:block">
                {( currentDuration ) && convertSecondToMinutesAndSecond( currentDuration) }
                {!currentDuration && "00:00" }
                {( songDuration ) && ' / '}
                {songDuration && convertSecondToMinutesAndSecond( songDuration )}
             </p>
-            <p>
+            <p className="hidden md:block">
                <span className="ellipsis">{currentSong.name}</span>
                <span className="block ellipsis text-white/50">{currentSong.artis_name}</span>
             </p>
@@ -100,7 +100,7 @@ export default function Player()  {
                mute={true}
                updateTime={false}
             />
-            <div>
+            <div className="hidden md:block">
                <input
                   // @ts-ignore
                   onChange={rangeInputHandler()}
