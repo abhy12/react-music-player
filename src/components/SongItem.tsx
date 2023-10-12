@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faShareNodes, faInfoCircle, faMusic, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal.tsx";
 import SocialShare from "./SocialShare.tsx";
+// @ts-ignore
+import download from "downloadjs/download.min.js";
 
 export default function SongItem({ id, name, artis_name, flt_name, thumb, audio }: SongInterface )  {
    const [isSongLoaded, setIsSongLoaded] = useState( false );
@@ -104,10 +106,15 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
                className="cursor-pointer"
                icon={faMusic}
             />
-            <FontAwesomeIcon
-               className="cursor-pointer"
-               icon={faDownload}
-            />
+            <button
+               className="inline-block"
+               onClick={() => download( audio, name ) } 
+            > 
+               <FontAwesomeIcon
+                  className="cursor-pointer"
+                  icon={faDownload}
+               />
+            </button>
          </div>
       </div>
    )
