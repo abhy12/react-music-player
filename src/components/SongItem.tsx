@@ -1,15 +1,16 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SongInterface } from "./Songs.tsx";
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import { updateIsPlaying, updateCurrentSongId, useAppDispatch, useAppSelector } from "../store/music-store";
 import WaveForm from "./WaveForm";
 import { convertSecondToMinutesAndSecond } from "../../util/util.ts"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus, faShareNodes, faInfoCircle, faMusic, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { faCirclePlus, faShareNodes, faMusic, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal.tsx";
 import SocialShare from "./SocialShare.tsx";
 // @ts-ignore
 import download from "downloadjs/download.min.js";
+import SongInfo from "./SongInfo.tsx";
 
 export default function SongItem({ id, name, artis_name, flt_name, thumb, audio }: SongInterface )  {
    const [isSongLoaded, setIsSongLoaded] = useState( false );
@@ -25,10 +26,6 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
 
       else if( currentSongId !== id ) setIsActive( false )
    }, [currentSongId]);
-
-   const closeModal = useCallback(() => {
-      setIsSocialModalActive( false );
-   }, [setIsSocialModalActive]);
 
    return(
       <div className="grid grid-cols-[40px_auto_1fr_auto] md:grid-cols-[55px_auto_1fr_1fr_120px_1fr_auto] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
@@ -93,15 +90,14 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
             {isSocialModalActive &&
                <Modal
                   active={isSocialModalActive}
-                  onClose={closeModal}
+                  onClose={() => {
+                     setIsSocialModalActive( false );
+                  }}
                >
                   <SocialShare url={audio} onCloseClick={() => {setIsSocialModalActive( false )}}/>
                </Modal>
             }
-            <FontAwesomeIcon
-               className="cursor-pointer"
-               icon={faInfoCircle}
-            />
+            <SongInfo songId={id} /> 
             <FontAwesomeIcon
                className="cursor-pointer"
                icon={faMusic}
