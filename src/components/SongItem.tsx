@@ -5,8 +5,7 @@ import { updateIsPlaying, updateCurrentSongId, useAppDispatch, useAppSelector } 
 import WaveForm from "./WaveForm";
 import { convertSecondToMinutesAndSecond } from "../../util/util.ts"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus, faShareNodes, faMusic, faDownload } from "@fortawesome/free-solid-svg-icons";
-import Modal from "./Modal.tsx";
+import { faCirclePlus, faMusic, faDownload } from "@fortawesome/free-solid-svg-icons";
 import SocialShare from "./SocialShare.tsx";
 // @ts-ignore
 import download from "downloadjs/download.min.js";
@@ -16,7 +15,6 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
    const [isSongLoaded, setIsSongLoaded] = useState( false );
    const [songDuration, setSongDuration] = useState<null | number>( null );
    const [isActive, setIsActive] = useState( false );
-   const [isSocialModalActive, setIsSocialModalActive] = useState( false );
    const { currentSongId, isPlaying, currentDuration } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
    const cateElRef = useRef<HTMLSpanElement>( null );
@@ -82,21 +80,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
             afterSongLoaded={() => setIsSongLoaded( true )}
          />
          <div className="text-base md:text-xl text-right text-white/50 space-x-2 md:space-x-4">
-            <FontAwesomeIcon
-               className="cursor-pointer"
-               icon={faShareNodes}
-               onClick={() => setIsSocialModalActive( true )}
-            />
-            {isSocialModalActive &&
-               <Modal
-                  active={isSocialModalActive}
-                  onClose={() => {
-                     setIsSocialModalActive( false );
-                  }}
-               >
-                  <SocialShare url={audio} onCloseClick={() => {setIsSocialModalActive( false )}}/>
-               </Modal>
-            }
+            <SocialShare url={audio} />
             <SongInfo songId={id} /> 
             <FontAwesomeIcon
                className="cursor-pointer"

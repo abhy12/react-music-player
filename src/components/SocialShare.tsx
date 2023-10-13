@@ -1,14 +1,16 @@
-import { useCallback, MouseEvent } from "react";
+import { useState, useCallback, MouseEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faLink } from "@fortawesome/free-solid-svg-icons";
 import { faFacebookF, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { faShareNodes } from "@fortawesome/free-solid-svg-icons";
+import Modal from "./Modal";
 
 interface SocialShareProps {
    url: string,
-   onCloseClick: CallableFunction
 }
 
-export default function SocialShare( { url, onCloseClick } :  SocialShareProps )  {
+export default function SocialShare( { url } :  SocialShareProps )  {
+   const [isModalActive, setIsModalActive] = useState( false );
 
    const copyLinkOnClickHandler = useCallback(( e: MouseEvent<HTMLElement> ) => {
       e.preventDefault();
@@ -31,58 +33,74 @@ export default function SocialShare( { url, onCloseClick } :  SocialShareProps )
             element.textContent = "LINK COPIED";
          } catch (err) {}
       })();
-    }, []);
+   }, []);
 
    return(
-      <div className="w-full max-w-md border-2 border-white/20 rounded p-3 md:p-4 m-2 md:m-0 bg-black text-white">
-         <div className="text-right">
-            <button
-               className="cursor-pointer text-lg"
-               onClick={() => {
-                  if( typeof onCloseClick === "function" )  onCloseClick();
-               }}
+      <>
+      <FontAwesomeIcon
+         className="cursor-pointer"
+         icon={faShareNodes}
+         onClick={() => setIsModalActive( true )}
+      />
+      {isModalActive &&
+         <Modal
+            active={isModalActive}
+            onClose={() => {
+               setIsModalActive( false );
+            }}
+         >
+         <div className="w-full max-w-md border-2 border-white/20 rounded p-3 md:p-4 m-2 md:m-0 bg-black text-white">
+            <div className="text-right">
+               <button
+                  className="cursor-pointer text-lg"
+                  onClick={() => {
+                     setIsModalActive( false );
+                  }}
+               >
+                  <FontAwesomeIcon
+                     icon={faXmark}
+                  />
+               </button>
+            </div>
+            <h4 className="mb-3 text-center text-lg md:text-2xl font-bold">Share Song</h4>
+            <a
+               className="p-3 md:p-5 font-semibold text-lg md:text-xl block bg-[#3b5998]"
+               href={"https://www.facebook.com/sharer/sharer.php?u=" + url}
+               target="_blank"
+               rel="nofollow"
             >
                <FontAwesomeIcon
-                  icon={faXmark}
+                  className="mr-2 md:mr-4"
+                  icon={faFacebookF}
                />
-            </button>
-         </div>
-         <h4 className="mb-3 text-center text-lg md:text-2xl font-bold">Share Song</h4>
-         <a
-            className="p-3 md:p-5 font-semibold text-lg md:text-xl block bg-[#3b5998]"
-            href={"https://www.facebook.com/sharer/sharer.php?u=" + url}
-            target="_blank"
-            rel="nofollow"
-         >
-            <FontAwesomeIcon
-               className="mr-2 md:mr-4"
-               icon={faFacebookF}
-            />
-            SHARE ON FACEBOOK
-         </a>
-         <a
-            className="p-3 md:p-5 font-semibold text-lg md:text-xl block bg-[#00aced]"
-            href={"https://twitter.com/intent/tweet?text=Hello%20world&url=" + url}
-            target="_blank"
-            rel="nofollow"
-         >
-            <FontAwesomeIcon
-               className="mr-2 md:mr-4"
-               icon={faTwitter}
-            />
-            SHARE ON TWITTER
-         </a>
-         <a
-            className="p-3 md:p-5 font-semibold text-lg md:text-xl block bg-[#242424]"
-            onClick={copyLinkOnClickHandler}
-            href={url}
-         >
-            <FontAwesomeIcon
-               className="mr-2 md:mr-4"
-               icon={faLink}
-            />
-            <span className="text">COPY LINK</span>
-         </a>
-      </div>
+               SHARE ON FACEBOOK
+            </a>
+            <a
+               className="p-3 md:p-5 font-semibold text-lg md:text-xl block bg-[#00aced]"
+               href={"https://twitter.com/intent/tweet?text=Hello%20world&url=" + url}
+               target="_blank"
+               rel="nofollow"
+            >
+               <FontAwesomeIcon
+                  className="mr-2 md:mr-4"
+                  icon={faTwitter}
+               />
+               SHARE ON TWITTER
+            </a>
+            <a
+               className="p-3 md:p-5 font-semibold text-lg md:text-xl block bg-[#242424]"
+               onClick={copyLinkOnClickHandler}
+               href={url}
+            >
+               <FontAwesomeIcon
+                  className="mr-2 md:mr-4"
+                  icon={faLink}
+               />
+               <span className="text">COPY LINK</span>
+            </a>
+         </div>           
+         </Modal>
+      } 
+      </>    
    );
 }
