@@ -4,3 +4,12 @@ export function convertSecondToMinutesAndSecond( time: number )  {
 
    return `${minutes}:${seconds}`;
 }
+
+export interface FilterInfoType{
+   [key: string]: FilterType[]
+}
+
+export interface FilterType {
+   id: number,
+   name: string
+}

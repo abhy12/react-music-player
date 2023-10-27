@@ -12,6 +12,8 @@ interface MusicState  {
       [key: number]: SongInterface
    },
    currentVolume: number,
+   songType: number,
+   filterCategories: number[],
 }
 
 const initialState: MusicState = {
@@ -22,6 +24,8 @@ const initialState: MusicState = {
    currentDurationSeek: 0,
    allSongs: {},
    currentVolume: 1,
+   songType: 0,
+   filterCategories: [],
 }
 
 const musicSlice = createSlice({
@@ -77,11 +81,27 @@ const musicSlice = createSlice({
       },
       updateCurrentVolume: ( state, action: PayloadAction<MusicState['currentVolume']> ) => {
          state.currentVolume = action.payload;
+      },
+      updateSongType: ( state, action: PayloadAction<MusicState['songType']> ) => {
+         state.songType = action.payload;
+      },
+      updateFilterCategories: ( state, action: PayloadAction<number> ) => {
+         const isIdAlreadyExists = state.filterCategories.find( id => id === action.payload );
+
+         if( isIdAlreadyExists === undefined ) {
+            state.filterCategories.push( action.payload );
+         } else {
+            const index = state.filterCategories.indexOf( isIdAlreadyExists );
+            if( index > -1 )  state.filterCategories.splice( index, 1 );
+         }
       }
    }
 });
 
-export const { updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs, nextSong, prevSong, updateCurrentVolume } = musicSlice.actions;
+export const {
+      updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs,
+      nextSong, prevSong, updateCurrentVolume, updateSongType, updateFilterCategories
+   } = musicSlice.actions;
 
 const store = configureStore({
    reducer: {

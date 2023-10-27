@@ -98,9 +98,9 @@ export default function SocialShare( { url } :  SocialShareProps )  {
                />
                <span className="text">COPY LINK</span>
             </a>
-         </div>           
+         </div>
          </Modal>
-      } 
-      </>    
+      }
+      </>
    );
 }

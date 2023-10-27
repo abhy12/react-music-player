@@ -42,3 +42,37 @@ html{
 .song-info .brac{
   @apply mx-2;
 }
+
+.button-switcher input[type="radio"]:checked + label{
+  @apply bg-orange-400;
+}
+
+.szh-accordion__item-btn{
+  @apply w-full text-left text-lg;
+}
+.szh-accordion__item-content{
+  @apply transition-all duration-200;
+}
+.szh-accordion__item-heading{
+  @apply flex items-center py-1 md:py-1.5;
+}
+.szh-accordion__item-heading::after{
+  content: '\f054';
+  font: var(--fa-font-solid);
+  @apply transition-all duration-200 inline-block text-xs flex-shrink-0;
+}
+.szh-accordion__item.szh-accordion__item--expanded > .szh-accordion__item-heading::after{
+  @apply rotate-90;
+}
+.szh-accordion__item-panel{
+  @apply space-y-1.5;
+}
+
+.custom-checkbox{
+  position: relative;
+}
+.custom-checkbox:checked::after{
+  content: '\f00c';
+  font: var(--fa-font-solid);
+  @apply text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+}

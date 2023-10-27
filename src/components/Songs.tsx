@@ -1,18 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import SongItem from './SongItem';
-import { updateAllSongs, updateFirstSongId, useAppDispatch } from '../store/music-store';
-import Player from './Player';
+import { updateAllSongs, updateFirstSongId, useAppDispatch, useAppSelector } from '../store/music-store';
 
-const categories = "43,16,189,179,180,209,44,45,17,32,33,181,36,182,37,210,38,39,40,41,190,98,97,96,95,94,93,92,91,90,89,88,87,86,122,123,124,2,70,3,4,138,71,72,73,74,133,75,77,119,78,79,80,81,82,83,84,135,112,114,109,108,111,110,118,113,139,53,6,101,54,55,56,105,104,136,57,117,58,134,7,106,137,59,60,61,66,67,103,115,68,120,62,64,116,63,65,102,69";
 const apiEndPoint = "https://staging2.syncorstream.com/api/fetch_music_json";
 const perPage = 8;
 
-export default function Songs() {
+interface SongsProps {
+   className?: string,
+}
+
+export default function Songs({ className }: SongsProps ) {
    const [songs, setSongs] = useState<SongInterface[]>([]);
    const [isLoading, setIsLoading] = useState( false );
    const [hasError, setHasError] = useState( false );
    const [currentPage, setCurrentPage] = useState( 1 );
+   const { songType, filterCategories } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
 
    const fetchSongs = useCallback( async () => {
@@ -20,11 +23,11 @@ export default function Songs() {
       setIsLoading( true );
 
       try{
-         const response = await axios.post( apiEndPoint ,{
-            post: 0,
+         const response = await axios.post( apiEndPoint, {
+            post: songType,
             page: currentPage,
             single_page: "staging2.syncorstream.com",
-            categories,            
+            categories: filterCategories.join(","),
             per_page: perPage,
             user: 155,
          });
@@ -32,14 +35,15 @@ export default function Songs() {
          const result = response;
          const records = result?.data?.records;
 
-         if( records )  {
-            if( currentPage === 1)  {
+         if( Array.isArray( records ) )  {
+            if( currentPage === 1 )  {
                setSongs( records );
             } else if( currentPage > 1 )  {
-               console.log( records ) 
                setSongs( state => [...state, ...records] );
-            } 
-         } 
+            }
+         } else {
+            setSongs([]);
+         }
 
          setIsLoading( false );
          // console.log( records );
@@ -48,15 +52,15 @@ export default function Songs() {
          setHasError( true );
          setIsLoading( false );
       }
-   }, [setSongs, setIsLoading, currentPage]);
+   }, [setSongs, setIsLoading, currentPage, songType, filterCategories]);
 
    const loadMoreSongs = useCallback( async () => {
       try{
          const response = await axios.post( apiEndPoint, {
-            post: 0,
+            post: songType,
             page: currentPage + 1,
             single_page: "staging2.syncorstream.com",
-            categories,            
+            categories: filterCategories,
             per_page: perPage,
             user: 155,
          });
@@ -65,20 +69,25 @@ export default function Songs() {
          const records = result?.data?.records;
 
          if( records )  {
-            console.log( records ) 
+            console.log( records )
             setSongs( state => [...state, ...records] );
             setCurrentPage( state => ++state )
-         } 
+         }
 
       } catch( e )  {
          console.error( "unable to fetch new songs!!!" );
       }
-     
-   }, [currentPage]); 
+
+   }, [currentPage, songType, filterCategories]);
 
    useEffect(() => {
       fetchSongs();
-   }, []);
+   }, [songType, filterCategories]);
+
+   useEffect(() => {
+      setCurrentPage( 1 );
+      console.log( filterCategories.toString() );
+   }, [songType, filterCategories]);
 
    let allSongs = {};
    let firstSongId: number | null = null;
@@ -102,23 +111,23 @@ export default function Songs() {
    }, [songs]);
 
    return(
-      <div>
-         <div className="p-3 md:p-5">
+      <div className={`${className ? className + ' ' : ''}`}>
+         <div>
             {(!isLoading && !hasError ) && items}
-            {(!isLoading && !hasError ) && 
-               <div className="text-center">            
+            {(!isLoading && !hasError && items.length === 0 ) && <p>Song not found</p>}
+            {(!isLoading && !hasError && items.length > 0 ) &&
+               <div className="text-center">
                   <button
-                     className="bg-[#0816bf] px-4 py-3 rounded font-semibold mt-4" 
-                     onClick={() => loadMoreSongs()} 
+                     className="bg-[#0816bf] px-4 py-3 rounded font-semibold mt-4"
+                     onClick={() => loadMoreSongs()}
                   >
                      Load More
                   </button>
-               </div>   
+               </div>
             }
             {isLoading && <p>Loading...</p>}
             {( !isLoading && hasError ) && <p>Something went wrong please try again.</p>}
          </div>
-         {(!isLoading && !hasError ) && <Player />}
       </div>
    );
 }

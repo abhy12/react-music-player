@@ -20,7 +20,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
    const cateElRef = useRef<HTMLSpanElement>( null );
 
    useEffect(() => {
-      if( currentSongId === id )  setIsActive( true )
+      if( currentSongId === id ) setIsActive( true )
 
       else if( currentSongId !== id ) setIsActive( false )
    }, [currentSongId]);
@@ -81,15 +81,15 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
          />
          <div className="text-base md:text-xl text-right text-white/50 space-x-2 md:space-x-4">
             <SocialShare url={audio} />
-            <SongInfo songId={id} /> 
+            <SongInfo songId={id} />
             <FontAwesomeIcon
                className="cursor-pointer"
                icon={faMusic}
             />
             <button
                className="inline-block"
-               onClick={() => download( audio, name ) } 
-            > 
+               onClick={() => download( audio, name ) }
+            >
                <FontAwesomeIcon
                   className="cursor-pointer"
                   icon={faDownload}
