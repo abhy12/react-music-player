@@ -6,8 +6,9 @@ import WaveForm from "./WaveForm";
 import { convertSecondToMinutesAndSecond } from "../../util/util";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faForwardStep, faBackwardStep } from "@fortawesome/free-solid-svg-icons";
+import { createPortal } from "react-dom";
 
-export default function Player()  {
+function PlayerContent()  {
    const [currentSong, setCurrentSong] = useState<SongInterface | null>( null );
    const { firstSongId, currentSongId, allSongs, isPlaying, currentDuration } = useAppSelector( state => state.music );
    const [isSongLoaded, setIsSongLoaded] = useState( false );
@@ -112,5 +113,17 @@ export default function Player()  {
             </div>
          </div>
       </div>
+   )
+}
+
+export default function Player() {
+   const playerContainer = document.getElementById( "global-music-player" );
+
+   if( !playerContainer )  return <></>
+
+   return(
+      <>
+         {createPortal( <PlayerContent />, playerContainer )}
+      </>
    )
 }
