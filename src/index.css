@@ -29,7 +29,9 @@ html{
 .full-line{
   @apply line-clamp-none;
 }
-
+.song-info *{
+  float: none!important;
+}
 .song-info .tack_t{
   @apply mb-1 md:mb-2 font-semibold text-xl md:text-3xl block text-white/40;
 }

@@ -46,9 +46,9 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
          </div>
          <p className="text-sm md:text-lg">
             <span className="ellipsis mb-1 md:mb-0">{name}</span>
-            <span className="block ellipsis text-white/50">{artis_name}</span>
+            <span className="block ellipsis text-white/50" dangerouslySetInnerHTML={{__html:  artis_name}}></span>
          </p>
-         <p className="text-white/50 hidden md:flex items-start">
+         <p className="text-white/50 !hidden md:!flex items-start">
             <span
                className="grow mr-2 ellipsis ellipsis-2"
                ref={cateElRef}
@@ -64,14 +64,14 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio 
                }}
             />
          </p>
-         <p className="text-center text-white/50 hidden md:block">
+         <p className="text-center text-white/50 !hidden md:!block">
             {( !isActive && songDuration ) && '00:00'}
             {( currentDuration && isActive ) && convertSecondToMinutesAndSecond( currentDuration ) }
             {( songDuration ) && ' / '}
             {songDuration && convertSecondToMinutesAndSecond( songDuration )}
          </p>
          <WaveForm
-            className="hidden md:block"
+            className="!hidden md:!block"
             songId={id}
             audioUrl={audio}
             play={isPlaying}

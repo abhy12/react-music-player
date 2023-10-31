@@ -48,7 +48,7 @@ function PlayerContent()  {
    if( !currentSong || !songId )  return<></>
 
    return(
-      <div className="sticky left-0 right-0 bottom-0 z-50 bg-black">
+      <div className="fixed left-0 right-0 bottom-0 z-50 bg-black text-white">
          <div className="grid grid-cols-[40px_auto_auto_auto_1fr] md:grid-cols-[120px_auto_auto_auto_auto_1fr_1fr_auto] gap-x-4 md:gap-x-12 items-center p-3 md:px-12 py-6">
             <img className="w-full md:w-16 aspect-square" src={currentSong.thumb} />
             <div>
@@ -81,15 +81,15 @@ function PlayerContent()  {
                   onClick={() => dispatch( nextSong() )}
                />
             </div>
-            <p className="text-center text-white/50 hidden md:block">
+            <p className="text-center text-white/50 !hidden md:!block">
                {( currentDuration ) && convertSecondToMinutesAndSecond( currentDuration) }
                {!currentDuration && "00:00" }
                {( songDuration ) && ' / '}
                {songDuration && convertSecondToMinutesAndSecond( songDuration )}
             </p>
-            <p className="hidden md:block">
+            <p className="!hidden md:!block">
                <span className="ellipsis">{currentSong.name}</span>
-               <span className="block ellipsis text-white/50">{currentSong.artis_name}</span>
+               <span className="block ellipsis text-white/50" dangerouslySetInnerHTML={{__html: currentSong.artis_name}}></span>
             </p>
             <WaveForm
                songId={songId}
@@ -101,7 +101,7 @@ function PlayerContent()  {
                mute={true}
                updateTime={false}
             />
-            <div className="hidden md:block">
+            <div className="!hidden md:!block">
                <input
                   // @ts-ignore
                   onChange={rangeInputHandler()}
