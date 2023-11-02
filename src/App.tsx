@@ -8,7 +8,7 @@ function App() {
    return (
       <Provider store={store}>
          <div className="min-h-screen p-3 md:p-5 flex flex-col md:flex-row md:items-start gap-6">
-            <Filter className="md:w-1/6"/>
+            <Filter className="md:w-1/6 md:sticky md:top-0"/>
             <Songs className="md:w-5/6"/>
          </div>
          <Player />
