@@ -139,5 +139,5 @@ export interface SongInterface {
    thumb: string,
    audio: string,
    flt_name?: string[],
-   alt_yes_n: number,
+   alt_yes_n?: number,
 }

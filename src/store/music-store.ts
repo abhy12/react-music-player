@@ -5,9 +5,11 @@ import { SongInterface } from "../components/Songs";
 interface MusicState  {
    currentSongId: null | number | string,
    currentAltSongId: null | number | string,
+   currentSimSongId: null | number | string,
    firstSongId: number | null,
    isPlaying: boolean,
    isAltPlaying: boolean,
+   isSimPlaying: boolean,
    currentDuration: null | number,
    currentDurationSeek: number,
    allSongs: {
@@ -21,9 +23,11 @@ interface MusicState  {
 const initialState: MusicState = {
    currentSongId: null,
    currentAltSongId: null,
+   currentSimSongId: null,
    firstSongId: null,
    isPlaying: false,
    isAltPlaying: false,
+   isSimPlaying: false,
    currentDuration: null,
    currentDurationSeek: 0,
    allSongs: {},
@@ -42,6 +46,9 @@ const musicSlice = createSlice({
       updateCurrentAltSongId: ( state, action: PayloadAction<MusicState['currentAltSongId']> ) => {
          state.currentAltSongId = action.payload;
       },
+      updateCurrentSimSongId: ( state, action: PayloadAction<MusicState['currentSimSongId']> ) => {
+         state.currentSimSongId = action.payload;
+      },
       updateFirstSongId: ( state, action: PayloadAction<MusicState['firstSongId']> ) => {
          state.firstSongId = action.payload;
       },
@@ -50,6 +57,9 @@ const musicSlice = createSlice({
       },
       updateIsAltPlaying: ( state, action: PayloadAction<MusicState['isAltPlaying']> ) => {
          state.isAltPlaying = action.payload;
+      },
+      updateIsSimPlaying: ( state, action: PayloadAction<MusicState['isSimPlaying']> ) => {
+         state.isSimPlaying = action.payload;
       },
       updateCurrentDuration: ( state, action: PayloadAction<MusicState['currentDuration']> ) => {
          state.currentDuration = action.payload;
@@ -111,6 +121,7 @@ const musicSlice = createSlice({
 export const {
       updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs,
       nextSong, prevSong, updateCurrentVolume, updateSongType, updateFilterCategories, updateCurrentAltSongId, updateIsAltPlaying,
+      updateCurrentSimSongId, updateIsSimPlaying,
    } = musicSlice.actions;
 
 const store = configureStore({

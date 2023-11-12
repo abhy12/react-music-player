@@ -1,6 +1,6 @@
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import WaveForm from "./WaveForm";
-import { useAppSelector, useAppDispatch, updateCurrentAltSongId, updateIsAltPlaying, updateIsPlaying } from "../store/music-store";
+import { useAppSelector, useAppDispatch, updateCurrentAltSongId, updateIsAltPlaying, updateIsPlaying, updateIsSimPlaying } from "../store/music-store";
 
 interface AltSongProps{
    id: number | string,
@@ -10,7 +10,7 @@ interface AltSongProps{
 }
 
 export default function AltSong( { id, name, audio, nextSongFn }: AltSongProps ) {
-   const { currentAltSongId, isAltPlaying, isPlaying: isGlobalSongPlaying } = useAppSelector( state => state.music );
+   const { currentAltSongId, isAltPlaying, isPlaying: isGlobalSongPlaying, isSimPlaying } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
    const isActive = currentAltSongId === id;
 
@@ -21,6 +21,8 @@ export default function AltSong( { id, name, audio, nextSongFn }: AltSongProps )
                <PlayIcon className="w-5 h-5 cursor-pointer"
                   onClick={() => {
                      if( isGlobalSongPlaying ) dispatch( updateIsPlaying( false ) );
+
+                     if( isSimPlaying ) dispatch( updateIsSimPlaying( false ) );
 
                      dispatch( updateCurrentAltSongId( id ) );
                      dispatch( updateIsAltPlaying( true ) );

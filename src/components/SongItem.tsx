@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { SongInterface } from "./Songs.tsx";
 import { PlayIcon, PauseIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { updateIsPlaying, updateCurrentSongId, useAppDispatch, useAppSelector, updateIsAltPlaying } from "../store/music-store";
+import { updateIsPlaying, updateCurrentSongId, useAppDispatch, useAppSelector, updateIsAltPlaying, updateIsSimPlaying } from "../store/music-store";
 import WaveForm from "./WaveForm";
 import { convertSecondToMinutesAndSecond } from "../../util/util.ts"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,14 +11,16 @@ import SocialShare from "./SocialShare.tsx";
 import download from "downloadjs/download.min.js";
 import SongInfo from "./SongInfo.tsx";
 import AltSongs from "./AltSongs.tsx";
+import SimilarSongs from "./SimilarSongs.tsx";
 
 export default function SongItem({ id, name, artis_name, flt_name, thumb, audio, alt_yes_n: altSong }: SongInterface )  {
    const [isSongLoaded, setIsSongLoaded] = useState( false );
    const [songDuration, setSongDuration] = useState<null | number>( null );
    const [isActive, setIsActive] = useState( false );
    const [toggleAltSongs, setToggleAltSongs] = useState<boolean | null>( null );
-   const [isAccordionActive, setIsAccordionActive] = useState( false );
-   const { currentSongId, isPlaying, isAltPlaying, currentDuration } = useAppSelector( state => state.music );
+   const [toggleSimSongs, setToggleSimSongs] = useState<boolean | null>( null );
+   const [isAltAccordionActive, setIsAltAccordionActive] = useState( false );
+   const { currentSongId, isPlaying, isAltPlaying, isSimPlaying, currentDuration } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
    const cateElRef = useRef<HTMLSpanElement>( null );
    const hasAltSongs = altSong === 1 ? true : false;
@@ -43,6 +45,8 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
 
                         if( isAltPlaying ) dispatch( updateIsAltPlaying( false ) );
 
+                        if( isSimPlaying ) dispatch( updateIsSimPlaying( false ) );
+
                         dispatch( updateIsPlaying( true ) );
                         dispatch( updateCurrentSongId( id ) );
                      }}
@@ -64,7 +68,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                   className="bg-primary-blue/40 p-2 rounded-full flex-shrink-0"
                   onClick={() => setToggleAltSongs( state => !state ) }
                >
-                  <ChevronDownIcon className={`w-5 h-5 transition-transform duration-300${isAccordionActive ? ' rotate-180': ''}`} />
+                  <ChevronDownIcon className={`w-5 h-5 transition-transform duration-300${isAltAccordionActive? ' rotate-180': ''}`} />
                </button>
                }
             </div>
@@ -102,10 +106,14 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
             <div className="text-base md:text-xl text-right text-white/50 space-x-2 md:space-x-4">
                <SocialShare url={audio} />
                <SongInfo songId={id} />
-               <FontAwesomeIcon
-                  className="cursor-pointer"
-                  icon={faMusic}
-               />
+               <button
+                  onClick={() => setToggleSimSongs( state => !state )}
+               >
+                  <FontAwesomeIcon
+                     className="cursor-pointer"
+                     icon={faMusic}
+                  />
+               </button>
                <button
                   className="inline-block"
                   onClick={() => download( audio, name ) }
@@ -116,7 +124,8 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                </button>
             </div>
          </div>
-         {hasAltSongs && <AltSongs id={id} toggle={toggleAltSongs} isAccordionActive={setIsAccordionActive} />}
+         {hasAltSongs && <AltSongs id={id} toggle={toggleAltSongs} isAccordionActive={setIsAltAccordionActive} />}
+         <SimilarSongs id={id} name={name} toggle={toggleSimSongs} />
       </div>
    )
 }
