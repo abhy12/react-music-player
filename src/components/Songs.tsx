@@ -69,7 +69,7 @@ export default function Songs({ className }: SongsProps ) {
          const records = result?.data?.records;
 
          if( records )  {
-            console.log( records )
+            // console.log( records )
             setSongs( state => [...state, ...records] );
             setCurrentPage( state => ++state )
          }
@@ -86,7 +86,7 @@ export default function Songs({ className }: SongsProps ) {
 
    useEffect(() => {
       setCurrentPage( 1 );
-      console.log( filterCategories.toString() );
+      // console.log( filterCategories.toString() );
    }, [songType, filterCategories]);
 
    let allSongs = {};
@@ -138,5 +138,6 @@ export interface SongInterface {
    artis_name: string,
    thumb: string,
    audio: string,
-   flt_name?: string[]
+   flt_name?: string[],
+   alt_yes_n: number,
 }

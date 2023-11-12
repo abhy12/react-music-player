@@ -3,9 +3,11 @@ import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import { SongInterface } from "../components/Songs";
 
 interface MusicState  {
-   currentSongId: null | number,
+   currentSongId: null | number | string,
+   currentAltSongId: null | number | string,
    firstSongId: number | null,
    isPlaying: boolean,
+   isAltPlaying: boolean,
    currentDuration: null | number,
    currentDurationSeek: number,
    allSongs: {
@@ -18,8 +20,10 @@ interface MusicState  {
 
 const initialState: MusicState = {
    currentSongId: null,
+   currentAltSongId: null,
    firstSongId: null,
    isPlaying: false,
+   isAltPlaying: false,
    currentDuration: null,
    currentDurationSeek: 0,
    allSongs: {},
@@ -35,11 +39,17 @@ const musicSlice = createSlice({
       updateCurrentSongId: ( state, action: PayloadAction<MusicState['currentSongId']> ) => {
          state.currentSongId = action.payload;
       },
+      updateCurrentAltSongId: ( state, action: PayloadAction<MusicState['currentAltSongId']> ) => {
+         state.currentAltSongId = action.payload;
+      },
       updateFirstSongId: ( state, action: PayloadAction<MusicState['firstSongId']> ) => {
          state.firstSongId = action.payload;
       },
       updateIsPlaying: ( state, action: PayloadAction<MusicState['isPlaying']> ) => {
          state.isPlaying = action.payload;
+      },
+      updateIsAltPlaying: ( state, action: PayloadAction<MusicState['isAltPlaying']> ) => {
+         state.isAltPlaying = action.payload;
       },
       updateCurrentDuration: ( state, action: PayloadAction<MusicState['currentDuration']> ) => {
          state.currentDuration = action.payload;
@@ -64,7 +74,7 @@ const musicSlice = createSlice({
 
          state.currentSongId = nextSongId;
 
-         console.log( nextSongId, state.currentSongId , keys );
+         // console.log( nextSongId, state.currentSongId, keys );
       },
       prevSong: state => {
          if( !state.currentSongId )  return
@@ -100,7 +110,7 @@ const musicSlice = createSlice({
 
 export const {
       updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs,
-      nextSong, prevSong, updateCurrentVolume, updateSongType, updateFilterCategories
+      nextSong, prevSong, updateCurrentVolume, updateSongType, updateFilterCategories, updateCurrentAltSongId, updateIsAltPlaying,
    } = musicSlice.actions;
 
 const store = configureStore({

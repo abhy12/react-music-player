@@ -70,6 +70,13 @@ html{
   @apply space-y-1.5;
 }
 
+.accordion-no-after-header .szh-accordion__item-heading{
+  @apply p-0;
+}
+.accordion-no-after-header .szh-accordion__item-heading::after{
+  content: unset;
+}
+
 .custom-checkbox{
   position: relative;
 }

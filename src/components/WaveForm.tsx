@@ -3,7 +3,7 @@ import { useAppDispatch, updateCurrentDuration, updateCurrentDurationSeek, useAp
 import WaveSurfer from "wavesurfer.js";
 
 interface WaveFormProps {
-   songId: number,
+   songId: number | string,
    audioUrl: string,
    play: boolean,
    isActive: boolean,
@@ -12,9 +12,17 @@ interface WaveFormProps {
    afterSongLoaded?: CallableFunction,
    updateTime?: boolean,
    className?: string,
+   updateCurrentDurationOnSeek?: boolean,
+   nextSongFn?: CallableFunction,
 }
 
-export default function WaveForm({ songId, audioUrl, play, isActive, mute = false, setDuration, afterSongLoaded, updateTime = true, className }: WaveFormProps ) {
+export default function WaveForm(
+   {
+     className, songId, audioUrl, play, isActive, mute = false, setDuration,
+     afterSongLoaded, updateTime = true, updateCurrentDurationOnSeek = true,
+     nextSongFn
+   }: WaveFormProps ) {
+
    const ref = useRef<any>( undefined );
    const [waveInstance, setWaveInstance] = useState<null | WaveSurfer>( null );
    const dispatch = useAppDispatch();
@@ -75,12 +83,16 @@ export default function WaveForm({ songId, audioUrl, play, isActive, mute = fals
 
       // don't use "seeking" event it will give
       // some glitch effect when sound is playing
-      instance.on( "click", waveFormClickHandler );
+      if( updateCurrentDurationOnSeek ) instance.on( "click", waveFormClickHandler );
 
       if( mute ) instance.setMuted( true )
 
       instance.on( "finish", () => {
-         dispatch( nextSong() );
+         if( typeof nextSongFn === "function" ) {
+            nextSongFn( songId );
+         } else {
+            dispatch( nextSong() );
+         }
       });
 
       setWaveInstance( instance );
