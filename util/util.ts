@@ -5,6 +5,17 @@ export function convertSecondToMinutesAndSecond( time: number )  {
    return `${minutes}:${seconds}`;
 }
 
+export function debounce( func: CallableFunction, timeout = 200 ) {
+   let timer: any;
+
+   return ( ...args: any ) => {
+     clearTimeout( timer );
+
+     //  @ts-ignore
+     timer = setTimeout(() => { func.apply( this, args ) }, timeout );
+   }
+ }
+
 export interface FilterInfoType{
    [key: string]: FilterType[]
 }

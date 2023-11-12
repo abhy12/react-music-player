@@ -18,6 +18,7 @@ interface MusicState  {
    currentVolume: number,
    songType: number,
    filterCategories: number[],
+   search: string,
 }
 
 const initialState: MusicState = {
@@ -34,6 +35,7 @@ const initialState: MusicState = {
    currentVolume: 1,
    songType: 0,
    filterCategories: [],
+   search: '',
 }
 
 const musicSlice = createSlice({
@@ -114,6 +116,9 @@ const musicSlice = createSlice({
             const index = state.filterCategories.indexOf( isIdAlreadyExists );
             if( index > -1 )  state.filterCategories.splice( index, 1 );
          }
+      },
+      updateSearch: ( state, action: PayloadAction<MusicState['search']> ) => {
+         state.search = action.payload;
       }
    }
 });
@@ -121,7 +126,7 @@ const musicSlice = createSlice({
 export const {
       updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs,
       nextSong, prevSong, updateCurrentVolume, updateSongType, updateFilterCategories, updateCurrentAltSongId, updateIsAltPlaying,
-      updateCurrentSimSongId, updateIsSimPlaying,
+      updateCurrentSimSongId, updateIsSimPlaying, updateSearch,
    } = musicSlice.actions;
 
 const store = configureStore({

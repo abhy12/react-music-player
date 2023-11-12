@@ -15,7 +15,7 @@ export default function Songs({ className }: SongsProps ) {
    const [isLoading, setIsLoading] = useState( false );
    const [hasError, setHasError] = useState( false );
    const [currentPage, setCurrentPage] = useState( 1 );
-   const { songType, filterCategories } = useAppSelector( state => state.music );
+   const { songType, filterCategories, search } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
 
    const fetchSongs = useCallback( async () => {
@@ -30,6 +30,7 @@ export default function Songs({ className }: SongsProps ) {
             categories: filterCategories.join(","),
             per_page: perPage,
             user: 155,
+            search,
          });
 
          const result = response;
@@ -52,7 +53,7 @@ export default function Songs({ className }: SongsProps ) {
          setHasError( true );
          setIsLoading( false );
       }
-   }, [setSongs, setIsLoading, currentPage, songType, filterCategories]);
+   }, [setSongs, setIsLoading, currentPage, songType, filterCategories, search]);
 
    const loadMoreSongs = useCallback( async () => {
       try{
@@ -78,11 +79,11 @@ export default function Songs({ className }: SongsProps ) {
          console.error( "unable to fetch new songs!!!" );
       }
 
-   }, [currentPage, songType, filterCategories]);
+   }, [currentPage, songType, filterCategories, search]);
 
    useEffect(() => {
       fetchSongs();
-   }, [songType, filterCategories]);
+   }, [songType, filterCategories, search]);
 
    useEffect(() => {
       setCurrentPage( 1 );
