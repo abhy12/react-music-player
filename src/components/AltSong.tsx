@@ -3,7 +3,7 @@ import WaveForm from "./WaveForm";
 import { useAppSelector, useAppDispatch, updateCurrentAltSongId, updateIsAltPlaying, updateIsPlaying } from "../store/music-store";
 
 interface AltSongProps{
-   id: string,
+   id: number | string,
    name: string,
    audio: string,
    nextSongFn: CallableFunction,

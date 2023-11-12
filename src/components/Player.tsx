@@ -13,18 +13,21 @@ function PlayerContent()  {
    const { firstSongId, currentSongId, allSongs, isPlaying, currentDuration } = useAppSelector( state => state.music );
    const [isSongLoaded, setIsSongLoaded] = useState( false );
    const [songDuration, setSongDuration] = useState<null | number>( null );
-   const [songId, setSongId] = useState<null | number>( null );
+   const [songId, setSongId] = useState<null | number | string >( null );
    const dispatch = useAppDispatch();
 
    useEffect(() => {
-      let id;
+      let id: null | number | string = null;
+
       if( currentSongId === null )  {
          id = firstSongId;
       } else if( currentSongId ) {
          id = currentSongId;
       }
 
+      // @ts-ignore
       if( !id || !allSongs[id] )  return
+      // @ts-ignore
       setCurrentSong( allSongs[id] );
       setSongId( id );
 

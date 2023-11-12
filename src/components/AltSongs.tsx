@@ -7,14 +7,14 @@ import { useAppDispatch, updateCurrentAltSongId, nextSong, updateIsPlaying, upda
 const apiEndPoint = 'https://staging2.syncorstream.com/api/alt_songs_json';
 
 interface AltSongsProps {
-   id: number,
+   id: number | string,
    toggle: boolean | null,
    isAccordionActive: Dispatch<SetStateAction<boolean>>,
 }
 
 export interface AltSongInterface{
    i_o2: number,
-   id: string,
+   id: number | string,
    name: string,
    audio: string,
 }

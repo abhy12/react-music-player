@@ -5,7 +5,7 @@ import { faInfoCircle, faXmark } from "@fortawesome/free-solid-svg-icons";
 import Modal from './Modal';
 
 interface SongInfoProps {
-   songId: number,
+   songId: number | string,
 }
 
 interface InfoType {

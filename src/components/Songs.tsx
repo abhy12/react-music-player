@@ -90,7 +90,7 @@ export default function Songs({ className }: SongsProps ) {
    }, [songType, filterCategories]);
 
    let allSongs = {};
-   let firstSongId: number | null = null;
+   let firstSongId: number | string | null = null;
 
    const items = songs.map(( song, i ) => {
       // saving first song ID because the way we saving all songs in a object with number as a key
@@ -133,7 +133,7 @@ export default function Songs({ className }: SongsProps ) {
 }
 
 export interface SongInterface {
-   id: number,
+   id: number | string,
    name: string,
    artis_name: string,
    thumb: string,
