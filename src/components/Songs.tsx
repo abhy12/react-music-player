@@ -119,10 +119,10 @@ export default function Songs({ className }: SongsProps ) {
             {(!isLoading && !hasError && items.length > 0 ) &&
                <div className="text-center">
                   <button
-                     className="bg-[#0816bf] px-4 py-3 rounded font-semibold mt-4"
+                     className="bg-[#0816bf] px-4 py-1 rounded-full font-semibold text-base mt-4"
                      onClick={() => loadMoreSongs()}
                   >
-                     Load More
+                     LOAD MORE...
                   </button>
                </div>
             }
