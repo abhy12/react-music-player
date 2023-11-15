@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import WaveForm from "./WaveForm";
 import { useAppSelector, useAppDispatch, updateCurrentAltSongId, updateIsAltPlaying, updateIsPlaying, updateIsSimPlaying } from "../store/music-store";
@@ -14,19 +15,22 @@ export default function AltSong( { id, name, audio, nextSongFn }: AltSongProps )
    const dispatch = useAppDispatch();
    const isActive = currentAltSongId === id;
 
+   const playSong = useCallback(() => {
+      if( isGlobalSongPlaying ) dispatch( updateIsPlaying( false ) );
+
+      if( isSimPlaying ) dispatch( updateIsSimPlaying( false ) );
+
+      dispatch( updateCurrentAltSongId( id ) );
+      dispatch( updateIsAltPlaying( true ) );
+
+   }, [isGlobalSongPlaying, isSimPlaying]);
+
    return(
       <div className="grid grid-cols-[auto_1fr_1fr] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
          <div>
             {( !isAltPlaying || !isActive ) &&
                <PlayIcon className="w-5 h-5 cursor-pointer"
-                  onClick={() => {
-                     if( isGlobalSongPlaying ) dispatch( updateIsPlaying( false ) );
-
-                     if( isSimPlaying ) dispatch( updateIsSimPlaying( false ) );
-
-                     dispatch( updateCurrentAltSongId( id ) );
-                     dispatch( updateIsAltPlaying( true ) );
-                  }}
+                  onClick={() => playSong()}
                />
             }
             {( isAltPlaying && isActive ) &&
@@ -43,8 +47,8 @@ export default function AltSong( { id, name, audio, nextSongFn }: AltSongProps )
             play={isActive && isAltPlaying && !isGlobalSongPlaying}
             setDuration={() => {}}
             updateTime={false}
-            updateCurrentDurationOnSeek={false}
             nextSongFn={nextSongFn}
+            onSeek={playSong}
          />
       </div>
    );

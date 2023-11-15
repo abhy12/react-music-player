@@ -12,15 +12,14 @@ interface WaveFormProps {
    afterSongLoaded?: CallableFunction,
    updateTime?: boolean,
    className?: string,
-   updateCurrentDurationOnSeek?: boolean,
    nextSongFn?: CallableFunction,
+   onSeek?: CallableFunction,
 }
 
 export default function WaveForm(
    {
      className, songId, audioUrl, play, isActive, mute = false, setDuration,
-     afterSongLoaded, updateTime = true, updateCurrentDurationOnSeek = true,
-     nextSongFn
+     afterSongLoaded, updateTime = true, nextSongFn, onSeek
    }: WaveFormProps ) {
 
    const ref = useRef<any>( undefined );
@@ -43,11 +42,16 @@ export default function WaveForm(
    const waveFormClickHandler = useCallback(() => {
       if( !waveRef.current ) return
 
-      if( !activeRef.current ) dispatch( updateCurrentSongId( songId ) );
+      if( typeof onSeek === "function" ) {
+         onSeek();
+      } else {
 
-      if( !playRef.current ) dispatch( updateIsPlaying( true ) );
+         if( !activeRef.current ) dispatch( updateCurrentSongId( songId ) );
 
-      dispatch( updateCurrentDurationSeek( waveRef.current.getCurrentTime() ) );
+         if( !playRef.current ) dispatch( updateIsPlaying( true ) );
+
+         dispatch( updateCurrentDurationSeek( waveRef.current.getCurrentTime() ) );
+      }
    }, [activeRef, waveRef]);
 
 
@@ -83,7 +87,7 @@ export default function WaveForm(
 
       // don't use "seeking" event it will give
       // some glitch effect when sound is playing
-      if( updateCurrentDurationOnSeek ) instance.on( "click", waveFormClickHandler );
+      instance.on( "click", waveFormClickHandler );
 
       if( mute ) instance.setMuted( true )
 
