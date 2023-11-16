@@ -2,11 +2,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useAppDispatch, updateSearch } from "../../store/music-store";
 
-export default function Search() {
+interface SearchProps{
+   className?: string,
+}
+
+export default function Search( { className }: SearchProps ) {
    const dispatch = useAppDispatch();
 
    return(
-      <div className="relative rounded-full border border-primary-blue overflow-hidden text-lg">
+      <div className={`${className ? className + ' ' : ''}relative rounded-full border border-primary-blue overflow-hidden text-lg`}>
          <input
             className="block font-semibold w-full py-2 pl-4 pr-11 h-11 bg-transparent focus:outline-none"
             type="text"

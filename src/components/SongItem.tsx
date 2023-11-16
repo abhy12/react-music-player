@@ -7,8 +7,6 @@ import { convertSecondToMinutesAndSecond } from "../../util/util.ts"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faMusic, faDownload } from "@fortawesome/free-solid-svg-icons";
 import SocialShare from "./SocialShare.tsx";
-// @ts-ignore
-import download from "downloadjs/download.min.js";
 import SongInfo from "./SongInfo.tsx";
 import AltSongs from "./AltSongs.tsx";
 import SimilarSongs from "./SimilarSongs.tsx";
@@ -72,7 +70,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                </button>
                }
             </div>
-            <p className="text-white/50 !hidden md:!flex items-start">
+            <p className="text-white/70 !hidden md:!flex items-start">
                <span
                   className="grow mr-2 ellipsis ellipsis-2"
                   ref={cateElRef}
@@ -103,7 +101,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                setDuration={setSongDuration}
                afterSongLoaded={() => setIsSongLoaded( true )}
             />
-            <div className="text-base md:text-xl text-right text-white/50 space-x-2 md:space-x-4">
+            <div className="grid grid-cols-2 gap-3 md:block text-base md:text-xl text-right text-white/50 md:space-x-4 ">
                <SocialShare url={audio} />
                <SongInfo songId={id} />
                <button
@@ -114,14 +112,14 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                      icon={faMusic}
                   />
                </button>
-               <button
+               <a
                   className="inline-block"
-                  onClick={() => download( audio, name ) }
+                  href="/pricing"
                >
                   <FontAwesomeIcon
                      icon={faDownload}
                   />
-               </button>
+               </a>
             </div>
          </div>
          {hasAltSongs && <AltSongs id={id} toggle={toggleAltSongs} isAccordionActive={setIsAltAccordionActive} />}
