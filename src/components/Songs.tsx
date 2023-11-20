@@ -15,6 +15,7 @@ export default function Songs({ className }: SongsProps ) {
    const [isLoading, setIsLoading] = useState( false );
    const [hasError, setHasError] = useState( false );
    const [currentPage, setCurrentPage] = useState( 1 );
+   const [currentCount, setCurrentCount] = useState( 0 );
    const { songType, filterCategories, search } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
 
@@ -35,6 +36,8 @@ export default function Songs({ className }: SongsProps ) {
 
          const result = response;
          const records = result?.data?.records;
+
+         if( typeof result.data.count === "number" ) setCurrentCount( result.data.count );
 
          if( Array.isArray( records ) )  {
             if( currentPage === 1 )  {
@@ -68,6 +71,8 @@ export default function Songs({ className }: SongsProps ) {
 
          const result = response;
          const records = result?.data?.records;
+
+         if( typeof result.data.count === "number" ) setCurrentCount( result.data.count );
 
          if( records )  {
             // console.log( records )
@@ -121,7 +126,7 @@ export default function Songs({ className }: SongsProps ) {
          <div>
             {(!isLoading && !hasError ) && items}
             {(!isLoading && !hasError && items.length === 0 ) && <p>Song not found</p>}
-            {(!isLoading && !hasError && items.length > 0 ) &&
+            {(!isLoading && !hasError && items.length > 0 && ( perPage * currentPage ) < currentCount ) &&
                <div className="text-center">
                   <button
                      className="bg-[#0816bf] px-4 py-1 rounded-full font-semibold text-base mt-4"
