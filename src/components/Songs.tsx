@@ -111,6 +111,11 @@ export default function Songs({ className }: SongsProps ) {
       if( typeof firstSongId === 'number' )  dispatch( updateFirstSongId( firstSongId ) );
    }, [songs]);
 
+   // reset current page
+   useEffect(() => {
+      setCurrentPage( 1 );
+   }, [filterCategories, search, songType]);
+
    return(
       <div className={`${className ? className + ' ' : ''}`}>
          <div>
