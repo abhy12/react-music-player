@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAppSelector, useAppDispatch, updateIsPlaying, updateCurrentSongId, nextSong, prevSong, updateCurrentVolume } from "../store/music-store";
-import { SongInterface } from "./Songs";
+import { useAppSelector, useAppDispatch, updateIsPlaying, updateCurrentSongId, updateCurrentSong, nextSong, prevSong, updateCurrentVolume } from "../store/music-store";
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import WaveForm from "./WaveForm";
 import { convertSecondToMinutesAndSecond } from "../../util/util";
@@ -8,33 +7,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faForwardStep, faBackwardStep } from "@fortawesome/free-solid-svg-icons";
 import { createPortal } from "react-dom";
 
-function PlayerContent()  {
-   const [currentSong, setCurrentSong] = useState<SongInterface | null>( null );
-   const { firstSongId, currentSongId, allSongs, isPlaying, currentDuration } = useAppSelector( state => state.music );
+function PlayerContent() {
+   const { firstSongId, currentSongId, currentSong, allSongs, isPlaying, currentDuration } = useAppSelector( state => state.music );
    const [isSongLoaded, setIsSongLoaded] = useState( false );
    const [songDuration, setSongDuration] = useState<null | number>( null );
-   const [songId, setSongId] = useState<null | number | string >( null );
    const dispatch = useAppDispatch();
 
    useEffect(() => {
-      let id: null | number | string = null;
+      if( !firstSongId || currentSongId ) return
 
-      if( currentSongId === null )  {
-         id = firstSongId;
-      } else if( currentSongId ) {
-         id = currentSongId;
-      }
+      const firstSong = allSongs[firstSongId];
 
-      // @ts-ignore
-      if( !id || !allSongs[id] )  return
-      // @ts-ignore
-      setCurrentSong( allSongs[id] );
-      setSongId( id );
+      if( !firstSong ) return
 
+      dispatch( updateCurrentSong( firstSong ) );
    }, [currentSongId, firstSongId]);
 
    // @ts-ignore
-   function rangeInputHandler( e: React.FormEvent<HTMLInputElement> )  {
+   function rangeInputHandler( e: React.FormEvent<HTMLInputElement> ) {
       let timeout: number;
 
       // @ts-ignore
@@ -48,7 +38,7 @@ function PlayerContent()  {
       }
    }
 
-   if( !currentSong || !songId )  return<></>
+   if( !currentSong ) return<></>
 
    return(
       <div className="fixed left-0 right-0 bottom-0 z-50 bg-black text-white">
@@ -65,15 +55,17 @@ function PlayerContent()  {
                {( !isPlaying ) &&
                   <PlayIcon className="w-5 h-5 cursor-pointer"
                      onClick={() => {
-                        if( !isSongLoaded )  return
-                        if( !currentSongId && songId ) dispatch( updateCurrentSongId( songId ) )
+                        if( !isSongLoaded ) return
+
+                        if( !currentSongId ) dispatch( updateCurrentSongId( currentSong.id ) )
+
                         dispatch( updateIsPlaying( true ) );
                      }}
                   />
                }
                {( isPlaying ) &&
                   <PauseIcon className="w-5 h-5 cursor-pointer"
-                     onClick={() => dispatch( updateIsPlaying( false ))}
+                     onClick={() => dispatch( updateIsPlaying( false ) )}
                   />
                }
             </div>
@@ -95,7 +87,7 @@ function PlayerContent()  {
                <span className="block ellipsis text-white/50" dangerouslySetInnerHTML={{__html: currentSong.artis_name}}></span>
             </p>
             <WaveForm
-               songId={songId}
+               songId={currentSong.id}
                audioUrl={currentSong.audio}
                play={isPlaying}
                isActive={true}
@@ -103,6 +95,7 @@ function PlayerContent()  {
                afterSongLoaded={() => setIsSongLoaded( true )}
                mute={true}
                updateTime={false}
+               nextSongOnFinish={false}
             />
             <div className="!hidden md:!block">
                <input

@@ -2,13 +2,15 @@ import axios from "axios";
 import { useEffect, useState, useCallback, useId, Dispatch, SetStateAction } from "react";
 import AltSong from "./AltSong";
 import { ControlledAccordion, AccordionItem, useAccordionProvider } from "@szhsin/react-accordion";
-import { useAppDispatch, updateCurrentAltSongId, nextSong, updateIsPlaying, updateIsAltPlaying } from "../store/music-store";
+import { useAppDispatch, useAppSelector, nextSong, updateCurrentSongId } from "../store/music-store";
 
 const apiEndPoint = 'https://staging2.syncorstream.com/api/alt_songs_json';
 
 interface AltSongsProps {
    id: number | string,
    toggle: boolean | null,
+   artis_name: string,
+   thumb: string,
    isAccordionActive: Dispatch<SetStateAction<boolean>>,
 }
 
@@ -16,11 +18,14 @@ export interface AltSongInterface{
    i_o2: number,
    id: number | string,
    name: string,
+   artis_name: string,
+   thumb: string,
    audio: string,
 }
 
-export default function AltSongs({ id, toggle, isAccordionActive }: AltSongsProps ) {
+export default function AltSongs({ id, artis_name, thumb, toggle, isAccordionActive }: AltSongsProps ) {
    const [songs, setSongs] = useState<AltSongInterface[]>([]);
+   const { currentSongId } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
    const accordionId = useId();
    const accordionProviderValue = useAccordionProvider({
@@ -57,13 +62,11 @@ export default function AltSongs({ id, toggle, isAccordionActive }: AltSongsProp
       const nextAltSong = songs[currentIndex + 1];
 
       if( currentIndex !== -1 && nextAltSong ) {
-         dispatch( updateCurrentAltSongId( nextAltSong.id ) );
+         dispatch( updateCurrentSongId( nextAltSong.id ) );
       } else {
-         dispatch( updateIsAltPlaying( false ) );
          dispatch( nextSong() );
-         dispatch( updateIsPlaying( true ) );
       }
-   }, [songs]);
+   }, [songs, currentSongId]);
 
    useEffect(() => {
       if( toggle === null ) return
@@ -97,6 +100,8 @@ export default function AltSongs({ id, toggle, isAccordionActive }: AltSongsProp
                   key={song.id}
                   id={song.id}
                   name={song.name}
+                  artis_name={artis_name}
+                  thumb={thumb}
                   audio={song.audio}
                   nextSongFn={nextAltSong}
                />

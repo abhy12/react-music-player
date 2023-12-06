@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { SongInterface } from "./Songs.tsx";
 import { PlayIcon, PauseIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { updateIsPlaying, updateCurrentSongId, useAppDispatch, useAppSelector, updateIsAltPlaying, updateIsSimPlaying } from "../store/music-store";
+import { updateIsPlaying, updateCurrentSongId, useAppDispatch, useAppSelector } from "../store/music-store";
 import WaveForm from "./WaveForm";
 import { convertSecondToMinutesAndSecond } from "../../util/util.ts"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,7 +18,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
    const [toggleAltSongs, setToggleAltSongs] = useState<boolean | null>( null );
    const [toggleSimSongs, setToggleSimSongs] = useState<boolean | null>( null );
    const [isAltAccordionActive, setIsAltAccordionActive] = useState( false );
-   const { currentSongId, isPlaying, isAltPlaying, isSimPlaying, currentDuration } = useAppSelector( state => state.music );
+   const { currentSongId, isPlaying, currentDuration } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
    const cateElRef = useRef<HTMLSpanElement>( null );
    const hasAltSongs = altSong === 1 ? true : false;
@@ -40,10 +40,6 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                   <PlayIcon className="w-5 h-5 cursor-pointer"
                      onClick={() => {
                         if( !isSongLoaded ) return
-
-                        if( isAltPlaying ) dispatch( updateIsAltPlaying( false ) );
-
-                        if( isSimPlaying ) dispatch( updateIsSimPlaying( false ) );
 
                         dispatch( updateIsPlaying( true ) );
                         dispatch( updateCurrentSongId( id ) );
@@ -100,6 +96,13 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                isActive={isActive}
                setDuration={setSongDuration}
                afterSongLoaded={() => setIsSongLoaded( true )}
+               updateCurrentSongOnActive={{
+                  id,
+                  name,
+                  artis_name,
+                  thumb,
+                  audio
+               }}
             />
             <div className="grid grid-cols-2 gap-3 md:block text-base md:text-xl text-right text-white/50 md:space-x-4 ">
                <SocialShare url={audio} />
@@ -122,7 +125,15 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                </a>
             </div>
          </div>
-         {hasAltSongs && <AltSongs id={id} toggle={toggleAltSongs} isAccordionActive={setIsAltAccordionActive} />}
+         {hasAltSongs &&
+         <AltSongs
+            id={id}
+            artis_name={artis_name}
+            thumb={thumb}
+            toggle={toggleAltSongs}
+            isAccordionActive={setIsAltAccordionActive}
+         />
+         }
          <SimilarSongs id={id} name={name} toggle={toggleSimSongs} />
       </div>
    )

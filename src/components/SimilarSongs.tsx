@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState, useCallback, useId } from "react";
 import SimilarSong from "./SimilarSong";
 import { ControlledAccordion, AccordionItem, useAccordionProvider } from "@szhsin/react-accordion";
-import { useAppDispatch, nextSong, updateIsPlaying, updateCurrentSimSongId, updateIsSimPlaying } from "../store/music-store";
+import { useAppDispatch, nextSong, updateCurrentSongId } from "../store/music-store";
 import { SongInterface } from "./Songs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -38,6 +38,8 @@ export default function SimilarSongs({ id, name, toggle }: AltSongsProps ) {
          // console.log( data );
 
          if( data && Array.isArray( data ) ) {
+            data.map( song => song.id = `${id}_sim_${song.id}` );
+
             setSongs( response.data.records );
          }
 
@@ -48,14 +50,12 @@ export default function SimilarSongs({ id, name, toggle }: AltSongsProps ) {
 
    const nextSimSong =  useCallback(( currentId: string ) => {
       const currentIndex = songs.findIndex( song => song.id === currentId );
-      const nextAltSong = songs[currentIndex + 1];
+      const nextSimSong = songs[currentIndex + 1];
 
-      if( currentIndex !== -1 && nextAltSong ) {
-         dispatch( updateCurrentSimSongId( nextAltSong.id ) );
+      if( currentIndex !== -1 && nextSimSong ) {
+         dispatch( updateCurrentSongId( nextSimSong.id ) );
       } else {
-         dispatch( updateIsSimPlaying( false ) );
          dispatch( nextSong() );
-         dispatch( updateIsPlaying( true ) );
       }
    }, [songs]);
 

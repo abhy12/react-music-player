@@ -1,41 +1,35 @@
-import { useCallback } from "react";
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import WaveForm from "./WaveForm";
-import { useAppSelector, useAppDispatch, updateCurrentAltSongId, updateIsAltPlaying, updateIsPlaying, updateIsSimPlaying } from "../store/music-store";
+import { useAppSelector, useAppDispatch, updateCurrentSongId, updateIsPlaying } from "../store/music-store";
 
 interface AltSongProps{
    id: number | string,
    name: string,
+   artis_name: string,
+   thumb: string,
    audio: string,
    nextSongFn: CallableFunction,
 }
 
-export default function AltSong( { id, name, audio, nextSongFn }: AltSongProps ) {
-   const { currentAltSongId, isAltPlaying, isPlaying: isGlobalSongPlaying, isSimPlaying } = useAppSelector( state => state.music );
+export default function AltSong( { id, name, artis_name, thumb, audio, nextSongFn }: AltSongProps ) {
+   const { currentSongId, isPlaying } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
-   const isActive = currentAltSongId === id;
-
-   const playSong = useCallback(() => {
-      if( isGlobalSongPlaying ) dispatch( updateIsPlaying( false ) );
-
-      if( isSimPlaying ) dispatch( updateIsSimPlaying( false ) );
-
-      dispatch( updateCurrentAltSongId( id ) );
-      dispatch( updateIsAltPlaying( true ) );
-
-   }, [isGlobalSongPlaying, isSimPlaying]);
+   const isActive = currentSongId === id;
 
    return(
       <div className="grid grid-cols-[auto_1fr_1fr] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
          <div>
-            {( !isAltPlaying || !isActive ) &&
+            {( !isPlaying || !isActive ) &&
                <PlayIcon className="w-5 h-5 cursor-pointer"
-                  onClick={() => playSong()}
+                  onClick={() => {
+                     dispatch( updateIsPlaying( true ) );
+                     dispatch( updateCurrentSongId( id ) );
+                  }}
                />
             }
-            {( isAltPlaying && isActive ) &&
+            {( isPlaying && isActive ) &&
                <PauseIcon className="w-5 h-5 cursor-pointer"
-                  onClick={() => dispatch( updateIsAltPlaying( false ) )}
+                  onClick={() => dispatch( updateIsPlaying( false ) )}
                />
             }
          </div>
@@ -44,11 +38,17 @@ export default function AltSong( { id, name, audio, nextSongFn }: AltSongProps )
             audioUrl={audio}
             songId={id}
             isActive={isActive}
-            play={isActive && isAltPlaying && !isGlobalSongPlaying}
+            play={isActive && isPlaying}
             setDuration={() => {}}
-            updateTime={false}
+            updateTime={true}
             nextSongFn={nextSongFn}
-            onSeek={playSong}
+            updateCurrentSongOnActive={{
+               id,
+               name,
+               artis_name,
+               thumb,
+               audio
+            }}
          />
       </div>
    );

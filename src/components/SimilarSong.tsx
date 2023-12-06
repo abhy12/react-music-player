@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { SongInterface } from "./Songs.tsx";
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
-import { updateIsPlaying, useAppDispatch, useAppSelector, updateIsSimPlaying, updateIsAltPlaying, updateCurrentSimSongId } from "../store/music-store";
+import { updateIsPlaying, useAppDispatch, useAppSelector, updateCurrentSongId } from "../store/music-store";
 import WaveForm from "./WaveForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faDownload } from "@fortawesome/free-solid-svg-icons";
@@ -16,33 +16,30 @@ interface SimilarSongProps extends SongInterface {
 
 export default function SimilarSong({ id, name, artis_name, flt_name, thumb, audio, nextSongFn }: SimilarSongProps )  {
    const [isSongLoaded, setIsSongLoaded] = useState( false );
-   const { currentSimSongId, isSimPlaying, isAltPlaying, isPlaying: isGlobalSongPlaying } = useAppSelector( state => state.music );
+   const { currentSongId, isPlaying } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
    const cateElRef = useRef<HTMLSpanElement>( null );
-   const isActive = id === currentSimSongId;
+   const isActive = id === currentSongId;
 
    return(
       <div>
          <div className="grid grid-cols-[40px_auto_1fr_auto] md:grid-cols-[55px_auto_1fr_1fr_1fr_auto] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
             <img className="w-full aspect-square" src={thumb} />
             <div>
-               {( !isSimPlaying || !isActive ) &&
+               {( !isPlaying || !isActive ) &&
                   <PlayIcon className="w-5 h-5 cursor-pointer"
                      onClick={() => {
                         if( !isSongLoaded ) return
 
-                        if( isAltPlaying ) dispatch( updateIsAltPlaying( false ) );
+                        dispatch( updateCurrentSongId( id ) );
 
-                        if( isGlobalSongPlaying ) dispatch( updateIsPlaying( false ) );
-
-                        dispatch( updateIsSimPlaying( true ) );
-                        dispatch( updateCurrentSimSongId( id ) );
+                        dispatch( updateIsPlaying( true ) );
                      }}
                   />
                }
-               {( isActive && isSimPlaying ) &&
+               {( isActive && isPlaying ) &&
                   <PauseIcon className="w-5 h-5 cursor-pointer"
-                     onClick={() => dispatch( updateIsSimPlaying( false ))}
+                     onClick={() => dispatch( updateIsPlaying( false ) )}
                   />
                }
             </div>
@@ -72,11 +69,18 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                className="!hidden md:!block"
                songId={id}
                audioUrl={audio}
-               play={isSimPlaying}
+               play={isPlaying && isActive}
                isActive={isActive}
                setDuration={() => {}}
                afterSongLoaded={() => setIsSongLoaded( true )}
                nextSongFn={nextSongFn}
+               updateCurrentSongOnActive={{
+                  id,
+                  name,
+                  thumb,
+                  artis_name,
+                  audio,
+               }}
             />
             <div className="text-base md:text-xl text-right text-white/50 space-x-2 md:space-x-4">
                <SocialShare url={audio} />

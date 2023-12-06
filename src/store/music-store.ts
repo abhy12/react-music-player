@@ -2,8 +2,9 @@ import { createSlice, configureStore, PayloadAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import { SongInterface } from "../components/Songs";
 
-interface MusicState  {
+interface MusicState {
    currentSongId: null | number | string,
+   currentSong: SongInterface | null,
    currentAltSongId: null | number | string,
    currentSimSongId: null | number | string,
    firstSongId: number | null,
@@ -23,6 +24,7 @@ interface MusicState  {
 
 const initialState: MusicState = {
    currentSongId: null,
+   currentSong: null,
    currentAltSongId: null,
    currentSimSongId: null,
    firstSongId: null,
@@ -44,6 +46,9 @@ const musicSlice = createSlice({
    reducers: {
       updateCurrentSongId: ( state, action: PayloadAction<MusicState['currentSongId']> ) => {
          state.currentSongId = action.payload;
+      },
+      updateCurrentSong: ( state, action: PayloadAction<MusicState['currentSong']> ) => {
+         state.currentSong = action.payload;
       },
       updateCurrentAltSongId: ( state, action: PayloadAction<MusicState['currentAltSongId']> ) => {
          state.currentAltSongId = action.payload;
@@ -74,10 +79,13 @@ const musicSlice = createSlice({
       },
       nextSong: state => {
          if( !state.currentSongId )  return
+         let globalPosition = state.currentSongId;
+
+         if( typeof globalPosition === "string" ) globalPosition = globalPosition.split( '_' )[0];
 
          // doing reverse because the way we saving all songs
          const keys = Object.keys( state.allSongs ).reverse();
-         const currentPosition = +keys.indexOf( state.currentSongId + '' );
+         const currentPosition = +keys.indexOf( globalPosition + '' );
          const nextPosition: string | undefined = keys[currentPosition + 1];
 
          if( !nextPosition )  return
@@ -124,7 +132,7 @@ const musicSlice = createSlice({
 });
 
 export const {
-      updateCurrentSongId, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs,
+      updateCurrentSongId, updateCurrentSong, updateFirstSongId, updateIsPlaying, updateCurrentDuration, updateCurrentDurationSeek, updateAllSongs,
       nextSong, prevSong, updateCurrentVolume, updateSongType, updateFilterCategories, updateCurrentAltSongId, updateIsAltPlaying,
       updateCurrentSimSongId, updateIsSimPlaying, updateSearch,
    } = musicSlice.actions;

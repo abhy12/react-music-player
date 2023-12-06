@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { useAppDispatch, updateCurrentDuration, updateCurrentDurationSeek, useAppSelector, updateCurrentSongId, updateIsPlaying, nextSong } from "../store/music-store";
+import { useAppDispatch, updateCurrentDuration, updateCurrentDurationSeek, useAppSelector, updateCurrentSongId, updateCurrentSong, updateIsPlaying, nextSong } from "../store/music-store";
 import WaveSurfer from "wavesurfer.js";
+import { SongInterface } from "./Songs";
 
 interface WaveFormProps {
    songId: number | string,
@@ -14,12 +15,25 @@ interface WaveFormProps {
    className?: string,
    nextSongFn?: CallableFunction,
    onSeek?: CallableFunction,
+   updateCurrentSongOnActive?: null | undefined | SongInterface,
+   nextSongOnFinish?: boolean,
 }
 
 export default function WaveForm(
    {
-     className, songId, audioUrl, play, isActive, mute = false, setDuration,
-     afterSongLoaded, updateTime = true, nextSongFn, onSeek
+     className,
+     songId,
+     audioUrl,
+     play,
+     isActive,
+     mute = false,
+     setDuration,
+     afterSongLoaded,
+     updateTime = true,
+     nextSongFn,
+     onSeek,
+     updateCurrentSongOnActive = null,
+     nextSongOnFinish = true,
    }: WaveFormProps ) {
 
    const ref = useRef<any>( undefined );
@@ -91,13 +105,15 @@ export default function WaveForm(
 
       if( mute ) instance.setMuted( true )
 
-      instance.on( "finish", () => {
-         if( typeof nextSongFn === "function" ) {
-            nextSongFn( songId );
-         } else {
-            dispatch( nextSong() );
-         }
-      });
+      if( nextSongOnFinish ) {
+         instance.on( "finish", () => {
+            if( typeof nextSongFn === "function" ) {
+               nextSongFn( songId );
+            } else {
+               dispatch( nextSong() );
+            }
+         });
+      }
 
       setWaveInstance( instance );
 
@@ -135,6 +151,12 @@ export default function WaveForm(
       }
    }, [isActive]);
 
+
+   useEffect(() => {
+      if( !isActive || !updateCurrentSongOnActive ) return
+
+      dispatch( updateCurrentSong( updateCurrentSongOnActive ) );
+   }, [isActive]);
 
    // when updating music url
    useEffect(() => {
