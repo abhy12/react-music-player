@@ -9,6 +9,7 @@ import SocialShare from "./SocialShare.tsx";
 // @ts-ignore
 import download from "downloadjs/download.min.js";
 import SongInfo from "./SongInfo.tsx";
+import { convertSecondToMinutesAndSecond } from "../../util/util.ts";
 
 interface SimilarSongProps extends SongInterface {
    nextSongFn: CallableFunction,
@@ -16,14 +17,15 @@ interface SimilarSongProps extends SongInterface {
 
 export default function SimilarSong({ id, name, artis_name, flt_name, thumb, audio, nextSongFn }: SimilarSongProps )  {
    const [isSongLoaded, setIsSongLoaded] = useState( false );
-   const { currentSongId, isPlaying } = useAppSelector( state => state.music );
+   const [songDuration, setSongDuration] = useState<null | number>( null );
+   const { currentSongId, isPlaying, currentDuration } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
    const cateElRef = useRef<HTMLSpanElement>( null );
    const isActive = id === currentSongId;
 
    return(
       <div>
-         <div className="grid grid-cols-[40px_auto_1fr_auto] md:grid-cols-[55px_auto_1fr_1fr_1fr_auto] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
+         <div className="grid grid-cols-[40px_auto_1fr_auto] md:grid-cols-[55px_auto_1fr_1fr_120px_1fr_auto] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
             <img className="w-full aspect-square" src={thumb} />
             <div>
                {( !isPlaying || !isActive ) &&
@@ -49,7 +51,7 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                   <span className="block ellipsis text-white/50" dangerouslySetInnerHTML={{__html:  artis_name}}></span>
                </div>
             </div>
-            <p className="text-white/50 !hidden md:!flex items-start">
+            <p className="text-white/70 !hidden md:!flex items-start">
                <span
                   className="grow mr-2 ellipsis ellipsis-2"
                   ref={cateElRef}
@@ -65,13 +67,19 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                   }}
                />
             </p>
+            <p className="text-center text-white/50 !hidden md:!block">
+               {( !isActive && songDuration ) && '00:00'}
+               {( currentDuration && isActive ) && convertSecondToMinutesAndSecond( currentDuration ) }
+               {( songDuration ) && ' / '}
+               {songDuration && convertSecondToMinutesAndSecond( songDuration )}
+            </p>
             <WaveForm
                className="!hidden md:!block"
                songId={id}
                audioUrl={audio}
                play={isPlaying && isActive}
                isActive={isActive}
-               setDuration={() => {}}
+               setDuration={setSongDuration}
                afterSongLoaded={() => setIsSongLoaded( true )}
                nextSongFn={nextSongFn}
                updateCurrentSongOnActive={{
@@ -82,7 +90,12 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                   audio,
                }}
             />
-            <div className="text-base md:text-xl text-right text-white/50 space-x-2 md:space-x-4">
+            <div className="grid grid-cols-2 gap-3 md:block text-base md:text-xl text-right text-white/50 md:space-x-4">
+               {/* add this icon just for alignment with main song items */}
+               <FontAwesomeIcon
+                  icon={faDownload}
+                  className="opacity-0 !hidden md:!inline-block"
+               />
                <SocialShare url={audio} />
                <SongInfo songId={id} />
                <button
