@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useAppDispatch, updateFilterCategories } from "../../store/music-store";
 import SongSwitcher from "./SongSwitcher";
 import CategoryFilter from "./CategoryFilter";
@@ -17,13 +17,22 @@ export default function Filter( { className }: FilterProps ) {
    const { songType } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
    const filterRef = useRef<HTMLDivElement>( null );
+   const categoryRef = useRef<HTMLDivElement>( null );
 
-   const onChangeHandler = useCallback(( e: SyntheticEvent ) => {
-      // @ts-ignore
-      if( e.target.nodeName !== 'INPUT' ) return
-      const el = e.target as HTMLInputElement;
-      dispatch( updateFilterCategories( +el.value ) );
-   }, []);
+   const updatefilterhandler = useCallback(() => {
+      if( !categoryRef.current ) return
+
+      const categoryCheckboxes = categoryRef.current.querySelectorAll( "input[type='checkbox']" );
+      const checkedBoxes: string[] = [];
+
+      categoryCheckboxes.forEach( cat => {
+         const checkbox = cat as HTMLInputElement;
+
+         if( checkbox.checked ) checkedBoxes.push( checkbox.value );
+      });
+
+      dispatch( updateFilterCategories( checkedBoxes.toString() ) );
+   }, [categoryRef]);
 
    return (
       <div className={`${className ? className + ' ' : ''}space-y-3`}>
@@ -43,13 +52,18 @@ export default function Filter( { className }: FilterProps ) {
          <div className="relative">
             <div className="space-y-3 !hidden md:!block absolute md:static -left-3 -right-3 z-50 bg-[#131313] md:bg-transparent p-3 md:p-0" ref={filterRef}>
                <SongSwitcher title={'FILTER BY'} />
-               <div onChange={onChangeHandler}>
+               <div ref={categoryRef}>
                   { /* @ts-ignore */}
                   { songType === 0 && <CategoryFilter categories={musicFilterInfo} /> }
                   { /* @ts-ignore */}
                   { songType === 1 && <CategoryFilter categories={sfxFilterInfo} /> }
                </div>
-               <button className="bg-primary-blue px-3 md:px-5 py-2 rounded-full font-semibold">UPDATE SEARCH</button>
+               <button
+                  className="bg-primary-blue px-3 md:px-5 py-2 rounded-full font-semibold"
+                  onClick={updatefilterhandler}
+               >
+                  UPDATE SEARCH
+               </button>
             </div>
          </div>
       </div>

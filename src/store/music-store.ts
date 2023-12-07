@@ -18,7 +18,7 @@ interface MusicState {
    },
    currentVolume: number,
    songType: number,
-   filterCategories: number[],
+   filterCategories: string,
    search: string,
 }
 
@@ -36,7 +36,7 @@ const initialState: MusicState = {
    allSongs: {},
    currentVolume: 1,
    songType: 0,
-   filterCategories: [],
+   filterCategories: '',
    search: '',
 }
 
@@ -115,15 +115,8 @@ const musicSlice = createSlice({
       updateSongType: ( state, action: PayloadAction<MusicState['songType']> ) => {
          state.songType = action.payload;
       },
-      updateFilterCategories: ( state, action: PayloadAction<number> ) => {
-         const isIdAlreadyExists = state.filterCategories.find( id => id === action.payload );
-
-         if( isIdAlreadyExists === undefined ) {
-            state.filterCategories.push( action.payload );
-         } else {
-            const index = state.filterCategories.indexOf( isIdAlreadyExists );
-            if( index > -1 )  state.filterCategories.splice( index, 1 );
-         }
+      updateFilterCategories: ( state, action: PayloadAction<MusicState['filterCategories']> ) => {
+         state.filterCategories = action.payload;
       },
       updateSearch: ( state, action: PayloadAction<MusicState['search']> ) => {
          state.search = action.payload;

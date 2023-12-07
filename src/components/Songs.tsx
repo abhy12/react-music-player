@@ -28,7 +28,7 @@ export default function Songs({ className }: SongsProps ) {
             post: songType,
             page: currentPage,
             single_page: "staging2.syncorstream.com",
-            categories: filterCategories.join(","),
+            categories: filterCategories,
             per_page: perPage,
             user: 155,
             search,
