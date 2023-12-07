@@ -123,7 +123,7 @@ export default function Songs({ className }: SongsProps ) {
       dispatch( updateCurrentSongId( null ) );
       dispatch( updateFirstSongId( null ) );
       dispatch( updateCurrentSong( null ) );
-      dispatch( updateCurrentDuration( 0 ) );
+      dispatch( updateCurrentDuration( null ) );
       dispatch( updateIsPlaying( false ) );
    }, [filterCategories, search, songType]);
 
