@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import SongItem from './SongItem';
-import { updateAllSongs, updateFirstSongId, useAppDispatch, useAppSelector } from '../store/music-store';
+import { updateAllSongs, updateFirstSongId, useAppDispatch, useAppSelector, updateCurrentSongId, updateIsPlaying, updateCurrentDuration, updateCurrentSong } from '../store/music-store';
 
 const apiEndPoint = "https://staging2.syncorstream.com/api/fetch_music_json";
 const perPage = 8;
@@ -116,9 +116,15 @@ export default function Songs({ className }: SongsProps ) {
       if( typeof firstSongId === 'number' )  dispatch( updateFirstSongId( firstSongId ) );
    }, [songs]);
 
-   // reset current page
+   // reset
    useEffect(() => {
       setCurrentPage( 1 );
+
+      dispatch( updateCurrentSongId( null ) );
+      dispatch( updateFirstSongId( null ) );
+      dispatch( updateCurrentSong( null ) );
+      dispatch( updateCurrentDuration( 0 ) );
+      dispatch( updateIsPlaying( false ) );
    }, [filterCategories, search, songType]);
 
    return(
