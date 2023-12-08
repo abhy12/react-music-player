@@ -50,7 +50,7 @@ export default function Filter( { className }: FilterProps ) {
             <Search className="grow" />
          </div>
          <div className="relative">
-            <div className="space-y-3 !hidden md:!block absolute md:static -left-3 -right-3 z-50 bg-[#131313] md:bg-transparent p-3 md:p-0" ref={filterRef}>
+            <div className="space-y-3 !hidden md:!block bg-[#131313] md:bg-transparent p-3 md:p-0" ref={filterRef}>
                <SongSwitcher title={'FILTER BY'} />
                <div ref={categoryRef}>
                   { /* @ts-ignore */}
