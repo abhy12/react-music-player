@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { SongInterface } from "./Songs.tsx";
 import { PlayIcon, PauseIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import { updateIsPlaying, updateCurrentSongId, useAppDispatch, useAppSelector } from "../store/music-store";
@@ -10,6 +10,7 @@ import SocialShare from "./SocialShare.tsx";
 import SongInfo from "./SongInfo.tsx";
 import AltSongs from "./AltSongs.tsx";
 import SimilarSongs from "./SimilarSongs.tsx";
+import useStack from "../hooks/use-stack.ts";
 
 export default function SongItem({ id, name, artis_name, flt_name, thumb, audio, alt_yes_n: altSong }: SongInterface )  {
    const [isSongLoaded, setIsSongLoaded] = useState( false );
@@ -22,6 +23,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
    const dispatch = useAppDispatch();
    const cateElRef = useRef<HTMLSpanElement>( null );
    const hasAltSongs = altSong === 1 ? true : false;
+   const [isCurrentStackLoaded, nextStackFnRef] = useStack();
 
    useEffect(() => {
       if( currentSongId === id ) {
@@ -30,6 +32,13 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
          setIsActive( false )
       }
    }, [currentSongId]);
+
+
+   const afterSongLoaded = useCallback(() => {
+      setIsSongLoaded( true );
+
+      if( typeof nextStackFnRef.current === "function" ) nextStackFnRef.current();
+   }, []);
 
    return(
       <div>
@@ -88,6 +97,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                {( songDuration ) && ' / '}
                {songDuration && convertSecondToMinutesAndSecond( songDuration )}
             </p>
+            {isCurrentStackLoaded &&
             <WaveForm
                className="!hidden md:!block"
                songId={id}
@@ -95,7 +105,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                play={isPlaying}
                isActive={isActive}
                setDuration={setSongDuration}
-               afterSongLoaded={() => setIsSongLoaded( true )}
+               afterSongLoaded={() => afterSongLoaded()}
                updateCurrentSongOnActive={{
                   id,
                   name,
@@ -104,6 +114,8 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                   audio
                }}
             />
+            }
+            {!isCurrentStackLoaded && <span />}
             <div className="grid grid-cols-2 gap-3 md:block text-base md:text-xl text-right text-white/50 md:space-x-4 ">
                <SocialShare url={audio} />
                <SongInfo songId={id} />

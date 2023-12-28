@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import SongItem from './SongItem';
 import { updateAllSongs, updateFirstSongId, useAppDispatch, useAppSelector, updateCurrentSongId, updateIsPlaying, updateCurrentDuration, updateCurrentSong } from '../store/music-store';
+import { callStack } from '../../util/util';
 
 const apiEndPoint = "https://staging2.syncorstream.com/api/fetch_music_json";
 const perPage = 8;
@@ -88,6 +89,8 @@ export default function Songs({ className }: SongsProps ) {
 
    useEffect(() => {
       fetchSongs();
+
+      callStack.empty();
    }, [songType, filterCategories, search]);
 
    useEffect(() => {

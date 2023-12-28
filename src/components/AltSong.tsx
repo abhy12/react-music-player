@@ -1,6 +1,8 @@
+import { useState, useCallback } from "react";
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import WaveForm from "./WaveForm";
 import { useAppSelector, useAppDispatch, updateCurrentSongId, updateIsPlaying } from "../store/music-store";
+import useStack from "../hooks/use-stack.ts";
 
 interface AltSongProps{
    id: number | string,
@@ -15,6 +17,14 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
    const { currentSongId, isPlaying } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
    const isActive = currentSongId === id;
+   const [isSongLoaded, setIsSongLoaded] = useState( false );
+   const [isCurrentStackLoaded, nextStackFnRef] = useStack();
+
+   const afterSongLoaded = useCallback(() => {
+      setIsSongLoaded( true );
+
+      if( typeof nextStackFnRef.current === "function" ) nextStackFnRef.current();
+   }, []);
 
    return(
       <div className="grid grid-cols-[auto_1fr_1fr] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
@@ -22,6 +32,8 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
             {( !isPlaying || !isActive ) &&
                <PlayIcon className="w-5 h-5 cursor-pointer"
                   onClick={() => {
+                     if( !isSongLoaded ) return
+
                      dispatch( updateIsPlaying( true ) );
                      dispatch( updateCurrentSongId( id ) );
                   }}
@@ -34,6 +46,7 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
             }
          </div>
          <p className="ellipsis">{name}</p>
+         {isCurrentStackLoaded &&
          <WaveForm
             audioUrl={audio}
             songId={id}
@@ -42,6 +55,7 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
             setDuration={() => {}}
             updateTime={true}
             nextSongFn={nextSongFn}
+            afterSongLoaded={() => afterSongLoaded()}
             updateCurrentSongOnActive={{
                id,
                name,
@@ -50,6 +64,8 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
                audio
             }}
          />
+         }
+         {!isCurrentStackLoaded && <span />}
       </div>
    );
 }

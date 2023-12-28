@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { SongInterface } from "./Songs.tsx";
 import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import { updateIsPlaying, useAppDispatch, useAppSelector, updateCurrentSongId } from "../store/music-store";
@@ -10,6 +10,7 @@ import SocialShare from "./SocialShare.tsx";
 import download from "downloadjs/download.min.js";
 import SongInfo from "./SongInfo.tsx";
 import { convertSecondToMinutesAndSecond } from "../../util/util.ts";
+import useStack from "../hooks/use-stack.ts";
 
 interface SimilarSongProps extends SongInterface {
    nextSongFn: CallableFunction,
@@ -22,6 +23,13 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
    const dispatch = useAppDispatch();
    const cateElRef = useRef<HTMLSpanElement>( null );
    const isActive = id === currentSongId;
+   const [isCurrentStackLoaded, nextStackFnRef] = useStack();
+
+   const afterSongLoaded = useCallback(() => {
+      setIsSongLoaded( true );
+
+      if( typeof nextStackFnRef.current === "function" ) nextStackFnRef.current();
+   }, []);
 
    return(
       <div>
@@ -73,6 +81,7 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                {( songDuration ) && ' / '}
                {songDuration && convertSecondToMinutesAndSecond( songDuration )}
             </p>
+            {isCurrentStackLoaded &&
             <WaveForm
                className="!hidden md:!block"
                songId={id}
@@ -80,7 +89,7 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                play={isPlaying && isActive}
                isActive={isActive}
                setDuration={setSongDuration}
-               afterSongLoaded={() => setIsSongLoaded( true )}
+               afterSongLoaded={() => afterSongLoaded()}
                nextSongFn={nextSongFn}
                updateCurrentSongOnActive={{
                   id,
@@ -90,6 +99,8 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                   audio,
                }}
             />
+            }
+            {!isCurrentStackLoaded && <span />}
             <div className="grid grid-cols-2 gap-3 md:block text-base md:text-xl text-right text-white/50 md:space-x-4">
                {/* add this icon just for alignment with main song items */}
                <FontAwesomeIcon
