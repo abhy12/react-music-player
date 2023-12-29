@@ -29,7 +29,7 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
    return(
       <div className="grid grid-cols-[auto_1fr_1fr] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
          <div>
-            {( !isPlaying || !isActive ) &&
+            {( ( !isPlaying || !isActive ) && isSongLoaded ) &&
                <PlayIcon className="w-5 h-5 cursor-pointer"
                   onClick={() => {
                      if( !isSongLoaded ) return
@@ -44,6 +44,7 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
                   onClick={() => dispatch( updateIsPlaying( false ) )}
                />
             }
+            {!isSongLoaded && <div className="spinner w-5" />}
          </div>
          <p className="ellipsis">{name}</p>
          {isCurrentStackLoaded &&

@@ -36,13 +36,12 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
          <div className="grid grid-cols-[40px_auto_1fr_auto] md:grid-cols-[55px_auto_1fr_1fr_120px_1fr_auto] gap-x-4 md:gap-x-6 items-center p-3 md:p-6 border-b border-white/10">
             <img className="w-full aspect-square" src={thumb} />
             <div>
-               {( !isPlaying || !isActive ) &&
+               {( ( !isPlaying || !isActive ) && isSongLoaded ) &&
                   <PlayIcon className="w-5 h-5 cursor-pointer"
                      onClick={() => {
                         if( !isSongLoaded ) return
 
                         dispatch( updateCurrentSongId( id ) );
-
                         dispatch( updateIsPlaying( true ) );
                      }}
                   />
@@ -52,6 +51,7 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                      onClick={() => dispatch( updateIsPlaying( false ) )}
                   />
                }
+               {!isSongLoaded && <div className="spinner w-5" />}
             </div>
             <div className="text-sm md:text-lg flex items-start">
                <div className="flex-grow">
