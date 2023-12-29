@@ -51,7 +51,7 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                      onClick={() => dispatch( updateIsPlaying( false ) )}
                   />
                }
-               {!isSongLoaded && <div className="spinner w-5" />}
+               {!isSongLoaded && <div className="song-loading-spinner w-5" />}
             </div>
             <div className="text-sm md:text-lg flex items-start">
                <div className="flex-grow">

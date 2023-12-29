@@ -86,15 +86,15 @@ html{
   @apply text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
 }
 
-.spinner{
+.song-loading-spinner{
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   border: 3px solid rgba(255,255,255, .4);
   border-top-color: #ffffff;
   position: relative;
-  animation: loading-spinner 800ms linear infinite;
+  animation: song-loading-spinner 800ms linear infinite;
 }
-@keyframes loading-spinner {
+@keyframes song-loading-spinner {
   from {
     transform: rotate(0deg);
   }

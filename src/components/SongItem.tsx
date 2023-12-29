@@ -60,7 +60,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                      onClick={() => dispatch( updateIsPlaying( false ) )}
                   />
                }
-               {!isSongLoaded && <div className="spinner w-4" />}
+               {!isSongLoaded && <div className="song-loading-spinner w-4" />}
             </div>
             <div className="text-sm md:text-lg flex items-start">
                <div className="flex-grow">

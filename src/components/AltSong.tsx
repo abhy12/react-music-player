@@ -44,7 +44,7 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
                   onClick={() => dispatch( updateIsPlaying( false ) )}
                />
             }
-            {!isSongLoaded && <div className="spinner w-5" />}
+            {!isSongLoaded && <div className="song-loading-spinner w-5" />}
          </div>
          <p className="ellipsis">{name}</p>
          {isCurrentStackLoaded &&
