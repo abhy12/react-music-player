@@ -66,7 +66,7 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
             }}
          />
          }
-         {!isCurrentStackLoaded && <span />}
+         {!isCurrentStackLoaded && <span className="!hidden md:!block" />}
       </div>
    );
 }

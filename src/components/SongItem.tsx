@@ -116,7 +116,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                }}
             />
             }
-            {!isCurrentStackLoaded && <span />}
+            {!isCurrentStackLoaded && <span className="!hidden md:!block" />}
             <div className="grid grid-cols-2 gap-3 md:block text-base md:text-xl text-right text-white/50 md:space-x-4 ">
                <SocialShare url={audio} />
                <SongInfo songId={id} />
