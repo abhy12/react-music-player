@@ -3,6 +3,7 @@ import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
 import WaveForm from "./WaveForm";
 import { useAppSelector, useAppDispatch, updateCurrentSongId, updateIsPlaying } from "../store/music-store";
 import useStack from "../hooks/use-stack.ts";
+import WaveSurfer from "wavesurfer.js";
 
 interface AltSongProps{
    id: number | string,
@@ -18,6 +19,7 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
    const dispatch = useAppDispatch();
    const isActive = currentSongId === id;
    const [isSongLoaded, setIsSongLoaded] = useState( false );
+   const [waveInstance, setWaveInstance] = useState<null | WaveSurfer>( null );
    const [isCurrentStackLoaded, nextStackFnRef] = useStack();
 
    const afterSongLoaded = useCallback(() => {
@@ -34,6 +36,8 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
                   onClick={() => {
                      if( !isSongLoaded ) return
 
+                     if( waveInstance ) waveInstance.play()
+
                      dispatch( updateIsPlaying( true ) );
                      dispatch( updateCurrentSongId( id ) );
                   }}
@@ -41,7 +45,11 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
             }
             {( isPlaying && isActive ) &&
                <PauseIcon className="w-5 h-5 cursor-pointer"
-                  onClick={() => dispatch( updateIsPlaying( false ) )}
+                  onClick={() => {
+                     if( waveInstance ) waveInstance.pause()
+
+                     dispatch( updateIsPlaying( false ) )
+                  }}
                />
             }
             {!isSongLoaded && <div className="song-loading-spinner w-5" />}
@@ -57,6 +65,7 @@ export default function AltSong( { id, name, artis_name, thumb, audio, nextSongF
             updateTime={true}
             nextSongFn={nextSongFn}
             afterSongLoaded={() => afterSongLoaded()}
+            getInstance={setWaveInstance}
             updateCurrentSongOnActive={{
                id,
                name,

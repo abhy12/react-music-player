@@ -17,6 +17,7 @@ interface WaveFormProps {
    onSeek?: CallableFunction,
    updateCurrentSongOnActive?: null | undefined | SongInterface,
    nextSongOnFinish?: boolean,
+   getInstance: Function,
 }
 
 export default function WaveForm(
@@ -34,6 +35,7 @@ export default function WaveForm(
      onSeek,
      updateCurrentSongOnActive = null,
      nextSongOnFinish = true,
+     getInstance
    }: WaveFormProps ) {
 
    const ref = useRef<any>( undefined );
@@ -116,6 +118,7 @@ export default function WaveForm(
       }
 
       setWaveInstance( instance );
+      if( typeof getInstance === "function" ) getInstance( instance );
 
       return () => instance.destroy();
    }, []);
@@ -170,7 +173,7 @@ export default function WaveForm(
          if( play )  {
             await waveInstance.play();
          } else {
-            await waveInstance.pause();
+            waveInstance.pause();
          }
       })();
 

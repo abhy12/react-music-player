@@ -6,10 +6,12 @@ import { convertSecondToMinutesAndSecond } from "../../util/util";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faForwardStep, faBackwardStep } from "@fortawesome/free-solid-svg-icons";
 import { createPortal } from "react-dom";
+import WaveSurfer from "wavesurfer.js";
 
 function PlayerContent() {
    const { firstSongId, currentSongId, currentSong, allSongs, isPlaying, currentDuration } = useAppSelector( state => state.music );
    const [isSongLoaded, setIsSongLoaded] = useState( false );
+   const [waveInstance, setWaveInstance] = useState<null | WaveSurfer>( null );
    const [songDuration, setSongDuration] = useState<null | number>( null );
    const dispatch = useAppDispatch();
 
@@ -59,13 +61,19 @@ function PlayerContent() {
 
                         if( !currentSongId ) dispatch( updateCurrentSongId( currentSong.id ) )
 
+                        if( waveInstance ) waveInstance.play()
+
                         dispatch( updateIsPlaying( true ) );
                      }}
                   />
                }
                {( isPlaying ) &&
                   <PauseIcon className="w-5 h-5 cursor-pointer"
-                     onClick={() => dispatch( updateIsPlaying( false ) )}
+                     onClick={() => {
+                        if( waveInstance ) waveInstance.pause()
+
+                        dispatch( updateIsPlaying( false ) )
+                     }}
                   />
                }
             </div>
@@ -93,6 +101,7 @@ function PlayerContent() {
                isActive={true}
                setDuration={setSongDuration}
                afterSongLoaded={() => setIsSongLoaded( true )}
+               getInstance={setWaveInstance}
                mute={true}
                updateTime={false}
                nextSongOnFinish={false}

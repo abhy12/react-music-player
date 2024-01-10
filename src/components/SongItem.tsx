@@ -11,10 +11,12 @@ import SongInfo from "./SongInfo.tsx";
 import AltSongs from "./AltSongs.tsx";
 import SimilarSongs from "./SimilarSongs.tsx";
 import useStack from "../hooks/use-stack.ts";
+import WaveSurfer from "wavesurfer.js";
 
 export default function SongItem({ id, name, artis_name, flt_name, thumb, audio, alt_yes_n: altSong }: SongInterface )  {
    const [isSongLoaded, setIsSongLoaded] = useState( false );
    const [songDuration, setSongDuration] = useState<null | number>( null );
+   const [waveInstance, setWaveInstance] = useState<null | WaveSurfer>( null );
    const [isActive, setIsActive] = useState( false );
    const [toggleAltSongs, setToggleAltSongs] = useState<boolean | null>( null );
    const [toggleSimSongs, setToggleSimSongs] = useState<boolean | null>( null );
@@ -50,6 +52,8 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                      onClick={() => {
                         if( !isSongLoaded ) return
 
+                        if( waveInstance ) waveInstance.play()
+
                         dispatch( updateIsPlaying( true ) );
                         dispatch( updateCurrentSongId( id ) );
                      }}
@@ -57,7 +61,11 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                }
                {( isActive && isPlaying ) &&
                   <PauseIcon className="w-5 h-5 cursor-pointer"
-                     onClick={() => dispatch( updateIsPlaying( false ) )}
+                     onClick={() => {
+                        if( waveInstance ) waveInstance.pause()
+
+                        dispatch( updateIsPlaying( false ) )
+                     }}
                   />
                }
                {!isSongLoaded && <div className="song-loading-spinner w-4" />}
@@ -107,6 +115,7 @@ export default function SongItem({ id, name, artis_name, flt_name, thumb, audio,
                isActive={isActive}
                setDuration={setSongDuration}
                afterSongLoaded={() => afterSongLoaded()}
+               getInstance={setWaveInstance}
                updateCurrentSongOnActive={{
                   id,
                   name,

@@ -11,6 +11,7 @@ import download from "downloadjs/download.min.js";
 import SongInfo from "./SongInfo.tsx";
 import { convertSecondToMinutesAndSecond } from "../../util/util.ts";
 import useStack from "../hooks/use-stack.ts";
+import WaveSurfer from "wavesurfer.js";
 
 interface SimilarSongProps extends SongInterface {
    nextSongFn: CallableFunction,
@@ -18,6 +19,7 @@ interface SimilarSongProps extends SongInterface {
 
 export default function SimilarSong({ id, name, artis_name, flt_name, thumb, audio, nextSongFn }: SimilarSongProps )  {
    const [isSongLoaded, setIsSongLoaded] = useState( false );
+   const [waveInstance, setWaveInstance] = useState<null | WaveSurfer>( null );
    const [songDuration, setSongDuration] = useState<null | number>( null );
    const { currentSongId, isPlaying, currentDuration } = useAppSelector( state => state.music );
    const dispatch = useAppDispatch();
@@ -41,6 +43,8 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                      onClick={() => {
                         if( !isSongLoaded ) return
 
+                        if( waveInstance ) waveInstance.play()
+
                         dispatch( updateCurrentSongId( id ) );
                         dispatch( updateIsPlaying( true ) );
                      }}
@@ -48,7 +52,11 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                }
                {( isActive && isPlaying ) &&
                   <PauseIcon className="w-5 h-5 cursor-pointer"
-                     onClick={() => dispatch( updateIsPlaying( false ) )}
+                     onClick={() => {
+                        if( waveInstance ) waveInstance.pause()
+
+                        dispatch( updateIsPlaying( false ) )
+                     }}
                   />
                }
                {!isSongLoaded && <div className="song-loading-spinner w-5" />}
@@ -90,6 +98,7 @@ export default function SimilarSong({ id, name, artis_name, flt_name, thumb, aud
                isActive={isActive}
                setDuration={setSongDuration}
                afterSongLoaded={() => afterSongLoaded()}
+               getInstance={setWaveInstance}
                nextSongFn={nextSongFn}
                updateCurrentSongOnActive={{
                   id,
